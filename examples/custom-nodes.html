@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Nodes — Hotwire Flow</title>
+  <link rel="stylesheet" href="../dist/hotwire-flow.css">
+  <script type="importmap">
+  { "imports": { "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/+esm" } }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; font-family: Inter, system-ui, -apple-system, sans-serif; }
+
+    .page-header { position: fixed; top: 0; left: 0; right: 0; height: 44px; background: #0f172a; display: flex; align-items: center; padding: 0 16px; z-index: 200; border-bottom: 1px solid #1e293b; gap: 8px; }
+    .page-header h1 { font-size: 14px; font-weight: 600; color: #e2e8f0; display: flex; align-items: center; gap: 8px; }
+    .flow-wrap { position: absolute; top: 44px; left: 0; right: 0; bottom: 0; }
+
+    .node-note { background: #fefce8 !important; border-color: #fde047 !important; width: 220px; max-width: 220px; overflow: hidden; }
+    .node-note .hf-node__header { background: #fef08a !important; color: #a16207 !important; }
+    .node-note .hf-node__body { color: #713f12; font-style: italic; font-size: 12px; line-height: 1.4; }
+
+    .node-code { background: #1e1e2e !important; border-color: #45475a !important; width: 260px; max-width: 260px; overflow: hidden; }
+    .node-code .hf-node__header { background: #313244 !important; color: #cdd6f4 !important; }
+    .node-code .hf-node__body { color: #a6adc8; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; line-height: 1.5; }
+    .node-code .line-num { color: #585b70; margin-right: 8px; user-select: none; }
+
+    .node-image { background: #fdf4ff !important; border-color: #e879f9 !important; width: 200px; max-width: 200px; overflow: hidden; }
+    .node-image .hf-node__header { background: #fae8ff !important; color: #a21caf !important; }
+    .node-image .img-placeholder { width: 100%; height: 80px; background: linear-gradient(135deg, #c084fc, #f472b6, #fb923c); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; }
+
+    .node-decision { background: #fff7ed !important; border-color: #fb923c !important; width: 180px; max-width: 180px; overflow: hidden; text-align: center; }
+    .node-decision .hf-node__header { background: #ffedd5 !important; color: #c2410c !important; justify-content: center; }
+    .node-decision .hf-node__body { text-align: center; }
+    .node-decision .branches { display: flex; justify-content: space-around; margin-top: 6px; font-size: 11px; }
+    .node-decision .branch-yes { color: #059669; font-weight: 600; }
+    .node-decision .branch-no { color: #ef4444; font-weight: 600; }
+
+    .node-result { background: #ecfdf5 !important; border-color: #34d399 !important; width: 150px; max-width: 150px; overflow: hidden; text-align: center; }
+    .node-result .hf-node__header { background: #d1fae5 !important; color: #065f46 !important; justify-content: center; }
+    .node-result .hf-node__body { text-align: center; font-size: 12px; color: #047857; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      Custom Node Types
+    </h1>
+    <div style="flex:1"></div>
+    <div style="font-size:12px;color:#64748b">Any HTML works as node content</div>
+  </div>
+
+  <div class="flow-wrap">
+    <div data-controller="flow" data-flow-fit-view-on-init-value="false" class="hf-canvas" id="flow-canvas">
+      <div data-controller="flow-background" data-flow-background-flow-outlet="#flow-canvas"
+           data-flow-background-variant-value="dots" style="position:absolute;inset:0;"></div>
+
+      <div data-flow-target="pane" class="hf-pane">
+        <div data-flow-target="nodes" class="hf-nodes">
+          <!-- note (220px) -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="note" data-flow-node-type-value="default"
+               data-flow-node-x-value="80" data-flow-node-y-value="200"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node node-note">
+            <div class="hf-node__header">&#128221; Note</div>
+            <div class="hf-node__body">
+              <div>Remember to validate all inputs before processing. Edge cases: null, empty string, negative numbers.</div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="note-r" data-flow-handle-node-id-value="note"
+                 data-flow-handle-position-value="right"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- code (260px) -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="code" data-flow-node-type-value="default"
+               data-flow-node-x-value="400" data-flow-node-y-value="80"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node node-code">
+            <div class="hf-node__header">&#128187; Code</div>
+            <div class="hf-node__body">
+              <div><span class="line-num">1</span>const x = input.map(i =&gt; {</div>
+              <div><span class="line-num">2</span>  return i * 2</div>
+              <div><span class="line-num">3</span>})</div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="code-l" data-flow-handle-node-id-value="code"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="code-r" data-flow-handle-node-id-value="code"
+                 data-flow-handle-position-value="right"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- image (200px) -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="img" data-flow-node-type-value="default"
+               data-flow-node-x-value="400" data-flow-node-y-value="360"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node node-image">
+            <div class="hf-node__header">&#128247; Image</div>
+            <div class="hf-node__body">
+              <div class="img-placeholder">Preview</div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="img-l" data-flow-handle-node-id-value="img"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- decision (180px) -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="decision" data-flow-node-type-value="default"
+               data-flow-node-x-value="760" data-flow-node-y-value="200"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node node-decision">
+            <div class="hf-node__header">&#9888; Decision</div>
+            <div class="hf-node__body">
+              <div>Is value &gt; threshold?</div>
+              <div class="branches">
+                <span class="branch-yes">&#10003; Yes</span>
+                <span class="branch-no">&#10007; No</span>
+              </div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="dec-l" data-flow-handle-node-id-value="decision"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="dec-r" data-flow-handle-node-id-value="decision"
+                 data-flow-handle-position-value="right"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- result (150px) -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="result" data-flow-node-type-value="output"
+               data-flow-node-x-value="1040" data-flow-node-y-value="200"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node node-result">
+            <div class="hf-node__header">&#10004; Result</div>
+            <div class="hf-node__body">
+              <div>Pipeline complete</div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="res-l" data-flow-handle-node-id-value="result"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+        </div>
+
+        <!-- SVG edges AFTER nodes -->
+        <svg style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1">
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e1" data-flow-edge-source-value="note"
+                data-flow-edge-source-handle-value="note-r" data-flow-edge-target-value="code"
+                data-flow-edge-target-handle-value="code-l" data-flow-edge-type-value="bezier"
+                data-flow-edge-label-value="notes" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e2" data-flow-edge-source-value="note"
+                data-flow-edge-source-handle-value="note-r" data-flow-edge-target-value="img"
+                data-flow-edge-target-handle-value="img-l" data-flow-edge-type-value="bezier"
+                data-flow-edge-label-value="assets" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e3" data-flow-edge-source-value="code"
+                data-flow-edge-source-handle-value="code-r" data-flow-edge-target-value="decision"
+                data-flow-edge-target-handle-value="dec-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-label-value="output"
+                data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e4" data-flow-edge-source-value="decision"
+                data-flow-edge-source-handle-value="dec-r" data-flow-edge-target-value="result"
+                data-flow-edge-target-handle-value="res-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-label-value="approved"
+                data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+        </svg>
+
+      </div>
+
+      <div class="hf-controls" data-controller="flow-toolbar" data-flow-toolbar-flow-outlet="#flow-canvas">
+        <button data-action="click->flow-toolbar#zoomIn" class="hf-control-btn">+</button>
+        <button data-flow-toolbar-target="zoomLevel" class="hf-control-btn hf-control-btn--zoom-level">100%</button>
+        <button data-action="click->flow-toolbar#zoomOut" class="hf-control-btn">-</button>
+        <button data-action="click->flow-toolbar#fitView" class="hf-control-btn">⊞</button>
+      </div>
+      <div data-controller="flow-minimap" data-flow-minimap-flow-outlet="#flow-canvas"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { Application } from "@hotwired/stimulus"
+    import { registerHotwireFlow } from "../src/index.js?v=9"
+    const app = Application.start()
+    registerHotwireFlow(app)
+  </script>
+</body>
+</html>
