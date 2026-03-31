@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Warehouse Operations — Hotwire Flow</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=x27http://www.w3.org/2000/svgx27 viewBox=x270 0 100 100x27%3E%3Crect width=x27100x27 height=x27100x27 fill=x27%233b82f6x27 rx=x2715x27/%3E%3Cpath d=x27M20 35 L40 35 L40 50 L60 50x27 stroke=x27whitex27 stroke-width=x276x27 stroke-linecap=x27roundx27 fill=x27nonex27/%3E%3Cpath d=x27M60 50 L80 50 L80 65x27 stroke=x27whitex27 stroke-width=x276x27 stroke-linecap=x27roundx27 fill=x27nonex27/%3E%3Ccircle cx=x2720x27 cy=x2735x27 r=x278x27 fill=x27whitex27/%3E%3Ccircle cx=x2760x27 cy=x2750x27 r=x278x27 fill=x27whitex27/%3E%3Ccircle cx=x2780x27 cy=x2765x27 r=x278x27 fill=x27whitex27/%3E%3C/svg%3E">
   <link rel="stylesheet" href="../dist/hotwire-flow.css">
   <script type="importmap">
   { "imports": { "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/+esm" } }
@@ -11,6 +12,11 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; overflow: hidden; font-family: Inter, system-ui, sans-serif; }
+    .page-header { position: fixed; top: 0; left: 0; right: 0; height: 44px; background: white; display: flex; align-items: center; padding: 0 16px; z-index: 200; border-bottom: 1px solid #e2e8f0; gap: 8px; }
+    .page-header h1 { font-size: 14px; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+    .page-header a { color: #64748b; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; margin-right: 16px; }
+    .page-header a:hover { color: #3b82f6; }
+    .page-header a svg { width: 16px; height: 16px; }
     .hf-canvas { background: #f5f3ef; }
     .hf-node { min-width: 170px; }
     .hf-node__body { font-size: 12px; }
@@ -20,14 +26,18 @@
   </style>
 </head>
 <body>
-  <div style="position:fixed;top:0;left:0;right:0;height:44px;background:#1c1917;display:flex;align-items:center;padding:0 16px;z-index:200;border-bottom:1px solid #292524;">
-    <h1 style="font-size:14px;font-weight:600;color:#e7e5e4;display:flex;align-items:center;gap:8px;">
+  <div class="page-header">
+    <a href="./">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back
+    </a>
+    <h1>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       Warehouse Operations
     </h1>
     <div style="flex:1"></div>
-    <span style="font-size:12px;color:#78716c;margin-right:16px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:4px"></span> Live</span>
-    <span style="font-size:12px;color:#78716c">7 stations &middot; 7 routes</span>
+    <span style="font-size:12px;color:#64748b;margin-right:16px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:4px"></span> Live</span>
+    <span style="font-size:12px;color:#64748b">7 stations &middot; 7 routes</span>
   </div>
 
   <div style="position:absolute;top:44px;left:0;right:0;bottom:0;">
