@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Org Chart — Hotwire Flow</title>
+  <link rel="stylesheet" href="./dist/hotwire-flow.css">
+  <script type="importmap">
+  { "imports": { "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/+esm" } }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; font-family: Inter, system-ui, sans-serif; }
+    .hf-canvas { background: #f0f4f8; }
+    .hf-node { min-width: 180px; }
+    .hf-node__body { font-size: 12px; }
+    .person { display: flex; gap: 10px; align-items: center; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; }
+    .name { font-weight: 600; color: #1e293b; font-size: 13px; }
+    .role { font-size: 11px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <div style="position:fixed;top:0;left:0;right:0;height:44px;background:#1e293b;display:flex;align-items:center;padding:0 16px;z-index:200;border-bottom:1px solid #334155;">
+    <h1 style="font-size:14px;font-weight:600;color:#e2e8f0;display:flex;align-items:center;gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Acme Corp &mdash; Org Chart
+    </h1>
+    <div style="flex:1"></div>
+    <span style="font-size:12px;color:#64748b">10 people</span>
+  </div>
+
+  <div style="position:absolute;top:44px;left:0;right:0;bottom:0;">
+    <div data-controller="flow" data-flow-fit-view-on-init-value="false" class="hf-canvas" id="flow-canvas">
+      <div data-controller="flow-background" data-flow-background-flow-outlet="#flow-canvas"
+           data-flow-background-variant-value="dots" data-flow-background-color-value="#cbd5e1"
+           style="position:absolute;inset:0;"></div>
+
+      <div data-flow-target="pane" class="hf-pane">
+        <div data-flow-target="nodes" class="hf-nodes">
+          <!-- CEO -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="ceo" data-flow-node-type-value="default"
+               data-flow-node-x-value="420" data-flow-node-y-value="40"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">CEO</div>
+            <div class="hf-node__body">
+              <div class="person">
+                <div class="avatar" style="background:#6366f1;">AL</div>
+                <div><div class="name">Alex Liu</div><div class="role">Chief Executive Officer</div></div>
+              </div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="ceo-b" data-flow-handle-node-id-value="ceo"
+                 data-flow-handle-position-value="bottom"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- VP Engineering -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="vp-eng" data-flow-node-type-value="default"
+               data-flow-node-x-value="120" data-flow-node-y-value="200"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">VP Engineering</div>
+            <div class="hf-node__body">
+              <div class="person">
+                <div class="avatar" style="background:#059669;">SR</div>
+                <div><div class="name">Sam Rivera</div><div class="role">Engineering Lead</div></div>
+              </div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="ve-t" data-flow-handle-node-id-value="vp-eng"
+                 data-flow-handle-position-value="top"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="ve-b" data-flow-handle-node-id-value="vp-eng"
+                 data-flow-handle-position-value="bottom"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- VP Sales -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="vp-sales" data-flow-node-type-value="default"
+               data-flow-node-x-value="420" data-flow-node-y-value="200"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">VP Sales</div>
+            <div class="hf-node__body">
+              <div class="person">
+                <div class="avatar" style="background:#d97706;">JP</div>
+                <div><div class="name">Jamie Park</div><div class="role">Sales Lead</div></div>
+              </div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="vs-t" data-flow-handle-node-id-value="vp-sales"
+                 data-flow-handle-position-value="top"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="vs-b" data-flow-handle-node-id-value="vp-sales"
+                 data-flow-handle-position-value="bottom"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- VP Product -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="vp-prod" data-flow-node-type-value="default"
+               data-flow-node-x-value="720" data-flow-node-y-value="200"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">VP Product</div>
+            <div class="hf-node__body">
+              <div class="person">
+                <div class="avatar" style="background:#e11d48;">MK</div>
+                <div><div class="name">Morgan Kim</div><div class="role">Product Lead</div></div>
+              </div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="vp-t" data-flow-handle-node-id-value="vp-prod"
+                 data-flow-handle-position-value="top"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="vp-b" data-flow-handle-node-id-value="vp-prod"
+                 data-flow-handle-position-value="bottom"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- Frontend Engineer -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="eng-fe" data-flow-node-type-value="default"
+               data-flow-node-x-value="40" data-flow-node-y-value="400"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Frontend Engineer</div>
+            <div class="hf-node__body">
+              <div class="person">
+                <div class="avatar" style="background:#8b5cf6;">TC</div>
+                <div><div class="name">Taylor Chen</div><div class="role">React / Vue</div></div>
+              </div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="fe-t" data-flow-handle-node-id-value="eng-fe"
+                 data-flow-handle-position-value="top"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- Backend Engineer -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="eng-be" data-flow-node-type-value="default"
+               data-flow-node-x-value="220" data-flow-node-y-value="400"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Backend Engineer</div>
+            <div class="hf-node__body">
+              <div class="person">
+                <div class="avatar" style="background:#0891b2;">RG</div>
+                <div><div class="name">Riley Gomez</div><div class="role">Go / Rust</div></div>
+              </div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="be-t" data-flow-handle-node-id-value="eng-be"
+                 data-flow-handle-position-value="top"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- Sales NA -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="sale-na" data-flow-node-type-value="default"
+               data-flow-node-x-value="350" data-flow-node-y-value="400"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Sales NA</div>
+            <div class="hf-node__body">
+              <div class="person">
+                <div class="avatar" style="background:#f59e0b;">DW</div>
+                <div><div class="name">Dana Wilson</div><div class="role">North America</div></div>
+              </div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="sn-t" data-flow-handle-node-id-value="sale-na"
+                 data-flow-handle-position-value="top"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- Sales EU -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="sale-eu" data-flow-node-type-value="default"
+               data-flow-node-x-value="510" data-flow-node-y-value="400"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Sales EU</div>
+            <div class="hf-node__body">
+              <div class="person">
+                <div class="avatar" style="background:#10b981;">KN</div>
+                <div><div class="name">Kai Nguyen</div><div class="role">Europe</div></div>
+              </div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="se-t" data-flow-handle-node-id-value="sale-eu"
+                 data-flow-handle-position-value="top"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- PM Core -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="pm-core" data-flow-node-type-value="default"
+               data-flow-node-x-value="650" data-flow-node-y-value="400"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">PM Core</div>
+            <div class="hf-node__body">
+              <div class="person">
+                <div class="avatar" style="background:#ec4899;">LM</div>
+                <div><div class="name">Lena Martinez</div><div class="role">Core Platform</div></div>
+              </div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="pc-t" data-flow-handle-node-id-value="pm-core"
+                 data-flow-handle-position-value="top"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- PM Mobile -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="pm-mobile" data-flow-node-type-value="default"
+               data-flow-node-x-value="810" data-flow-node-y-value="400"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">PM Mobile</div>
+            <div class="hf-node__body">
+              <div class="person">
+                <div class="avatar" style="background:#14b8a6;">JO</div>
+                <div><div class="name">Jordan Ortiz</div><div class="role">iOS / Android</div></div>
+              </div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="pm-t" data-flow-handle-node-id-value="pm-mobile"
+                 data-flow-handle-position-value="top"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+        </div>
+
+        <!-- SVG edges AFTER nodes -->
+        <svg style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1">
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e1" data-flow-edge-source-value="ceo"
+                data-flow-edge-source-handle-value="ceo-b" data-flow-edge-target-value="vp-eng"
+                data-flow-edge-target-handle-value="ve-t" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e2" data-flow-edge-source-value="ceo"
+                data-flow-edge-source-handle-value="ceo-b" data-flow-edge-target-value="vp-sales"
+                data-flow-edge-target-handle-value="vs-t" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e3" data-flow-edge-source-value="ceo"
+                data-flow-edge-source-handle-value="ceo-b" data-flow-edge-target-value="vp-prod"
+                data-flow-edge-target-handle-value="vp-t" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e4" data-flow-edge-source-value="vp-eng"
+                data-flow-edge-source-handle-value="ve-b" data-flow-edge-target-value="eng-fe"
+                data-flow-edge-target-handle-value="fe-t" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e5" data-flow-edge-source-value="vp-eng"
+                data-flow-edge-source-handle-value="ve-b" data-flow-edge-target-value="eng-be"
+                data-flow-edge-target-handle-value="be-t" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e6" data-flow-edge-source-value="vp-sales"
+                data-flow-edge-source-handle-value="vs-b" data-flow-edge-target-value="sale-na"
+                data-flow-edge-target-handle-value="sn-t" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e7" data-flow-edge-source-value="vp-sales"
+                data-flow-edge-source-handle-value="vs-b" data-flow-edge-target-value="sale-eu"
+                data-flow-edge-target-handle-value="se-t" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e8" data-flow-edge-source-value="vp-prod"
+                data-flow-edge-source-handle-value="vp-b" data-flow-edge-target-value="pm-core"
+                data-flow-edge-target-handle-value="pc-t" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e9" data-flow-edge-source-value="vp-prod"
+                data-flow-edge-source-handle-value="vp-b" data-flow-edge-target-value="pm-mobile"
+                data-flow-edge-target-handle-value="pm-t" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+        </svg>
+
+      </div>
+
+      <div class="hf-controls" data-controller="flow-toolbar" data-flow-toolbar-flow-outlet="#flow-canvas">
+        <button data-action="click->flow-toolbar#zoomIn" class="hf-control-btn">+</button>
+        <button data-flow-toolbar-target="zoomLevel" class="hf-control-btn hf-control-btn--zoom-level">100%</button>
+        <button data-action="click->flow-toolbar#zoomOut" class="hf-control-btn">-</button>
+        <button data-action="click->flow-toolbar#fitView" class="hf-control-btn">⊞</button>
+      </div>
+      <div data-controller="flow-minimap" data-flow-minimap-flow-outlet="#flow-canvas"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { Application } from "@hotwired/stimulus"
+    import { registerHotwireFlow } from "./src/index.js?v=9"
+    const app = Application.start()
+    registerHotwireFlow(app)
+  </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Layout — Hotwire Flow</title>
+  <link rel="stylesheet" href="./dist/hotwire-flow.css">
+  <script type="importmap">
+  { "imports": { "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/+esm" } }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; font-family: Inter, system-ui, sans-serif; }
+    .page-header { position: fixed; top: 0; left: 0; right: 0; height: 44px; background: #0f172a; display: flex; align-items: center; padding: 0 16px; z-index: 200; border-bottom: 1px solid #1e293b; gap: 8px; }
+    .page-header h1 { font-size: 14px; font-weight: 600; color: #e2e8f0; display: flex; align-items: center; gap: 8px; }
+    .flow-wrap { position: absolute; top: 44px; left: 0; right: 0; bottom: 0; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+      Auto Layout Demo
+    </h1>
+    <div style="flex:1"></div>
+    <div data-controller="flow-layout" data-flow-layout-flow-outlet="#flow-canvas" style="display:flex;gap:4px;">
+      <button class="hf-toolbar-bar__btn" data-action="click->flow-layout#layoutVertical">↓ Vertical</button>
+      <button class="hf-toolbar-bar__btn" data-action="click->flow-layout#layoutHorizontal">→ Horizontal</button>
+    </div>
+    <div style="font-size:12px;color:#64748b;margin-left:8px">Click layout buttons to auto-arrange</div>
+  </div>
+
+  <div class="flow-wrap">
+    <div data-controller="flow" data-flow-fit-view-on-init-value="false" class="hf-canvas" id="flow-canvas">
+      <div data-controller="flow-background" data-flow-background-flow-outlet="#flow-canvas" data-flow-background-variant-value="dots" style="position:absolute;inset:0;"></div>
+
+      <div data-flow-target="pane" class="hf-pane">
+        <div data-flow-target="nodes" class="hf-nodes">
+          <!-- Scattered nodes that will be auto-arranged -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas" data-flow-node-id-value="src" data-flow-node-type-value="input" data-flow-node-x-value="50" data-flow-node-y-value="300" class="hf-node hf-node--input" data-action="pointerdown->flow-node#pointerDown click->flow-node#click">
+            <div class="hf-node__header">Source</div>
+            <div class="hf-node__body">API input</div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas" data-flow-handle-id-value="src-r" data-flow-handle-node-id-value="src" data-flow-handle-position-value="right" class="hf-handle hf-handle--right" data-action="pointerdown->flow-handle#pointerDown"></div>
+          </div>
+
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas" data-flow-node-id-value="validate" data-flow-node-type-value="default" data-flow-node-x-value="600" data-flow-node-y-value="50" class="hf-node" data-action="pointerdown->flow-node#pointerDown click->flow-node#click">
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas" data-flow-handle-id-value="val-l" data-flow-handle-node-id-value="validate" data-flow-handle-position-value="left" class="hf-handle hf-handle--left" data-action="pointerdown->flow-handle#pointerDown"></div>
+            <div class="hf-node__header">Validate</div>
+            <div class="hf-node__body">Check schema</div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas" data-flow-handle-id-value="val-r" data-flow-handle-node-id-value="validate" data-flow-handle-position-value="right" class="hf-handle hf-handle--right" data-action="pointerdown->flow-handle#pointerDown"></div>
+          </div>
+
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas" data-flow-node-id-value="transform" data-flow-node-type-value="default" data-flow-node-x-value="400" data-flow-node-y-value="400" class="hf-node" data-action="pointerdown->flow-node#pointerDown click->flow-node#click">
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas" data-flow-handle-id-value="tx-l" data-flow-handle-node-id-value="transform" data-flow-handle-position-value="left" class="hf-handle hf-handle--left" data-action="pointerdown->flow-handle#pointerDown"></div>
+            <div class="hf-node__header">Transform</div>
+            <div class="hf-node__body">Map fields</div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas" data-flow-handle-id-value="tx-r" data-flow-handle-node-id-value="transform" data-flow-handle-position-value="right" class="hf-handle hf-handle--right" data-action="pointerdown->flow-handle#pointerDown"></div>
+          </div>
+
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas" data-flow-node-id-value="enrich" data-flow-node-type-value="default" data-flow-node-x-value="800" data-flow-node-y-value="300" class="hf-node" data-action="pointerdown->flow-node#pointerDown click->flow-node#click">
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas" data-flow-handle-id-value="en-l" data-flow-handle-node-id-value="enrich" data-flow-handle-position-value="left" class="hf-handle hf-handle--left" data-action="pointerdown->flow-handle#pointerDown"></div>
+            <div class="hf-node__header">Enrich</div>
+            <div class="hf-node__body">Add metadata</div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas" data-flow-handle-id-value="en-r" data-flow-handle-node-id-value="enrich" data-flow-handle-position-value="right" class="hf-handle hf-handle--right" data-action="pointerdown->flow-handle#pointerDown"></div>
+          </div>
+
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas" data-flow-node-id-value="store" data-flow-node-type-value="output" data-flow-node-x-value="300" data-flow-node-y-value="150" class="hf-node hf-node--output" data-action="pointerdown->flow-node#pointerDown click->flow-node#click">
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas" data-flow-handle-id-value="st-l" data-flow-handle-node-id-value="store" data-flow-handle-position-value="left" class="hf-handle hf-handle--left" data-action="pointerdown->flow-handle#pointerDown"></div>
+            <div class="hf-node__header">Store</div>
+            <div class="hf-node__body">Save to DB</div>
+          </div>
+
+          <svg style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1">
+            <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas" data-flow-edge-id-value="e1" data-flow-edge-source-value="src" data-flow-edge-source-handle-value="src-r" data-flow-edge-target-value="validate" data-flow-edge-target-handle-value="val-l" data-flow-edge-type-value="smoothstep" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+            <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas" data-flow-edge-id-value="e2" data-flow-edge-source-value="src" data-flow-edge-source-handle-value="src-r" data-flow-edge-target-value="transform" data-flow-edge-target-handle-value="tx-l" data-flow-edge-type-value="smoothstep" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+            <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas" data-flow-edge-id-value="e3" data-flow-edge-source-value="validate" data-flow-edge-source-handle-value="val-r" data-flow-edge-target-value="enrich" data-flow-edge-target-handle-value="en-l" data-flow-edge-type-value="smoothstep" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+            <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas" data-flow-edge-id-value="e4" data-flow-edge-source-value="transform" data-flow-edge-source-handle-value="tx-r" data-flow-edge-target-value="enrich" data-flow-edge-target-handle-value="en-l" data-flow-edge-type-value="smoothstep" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+            <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas" data-flow-edge-id-value="e5" data-flow-edge-source-value="enrich" data-flow-edge-source-handle-value="en-r" data-flow-edge-target-value="store" data-flow-edge-target-handle-value="st-l" data-flow-edge-type-value="smoothstep" data-flow-edge-animated-value="true" data-flow-edge-label-value="persist" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+            <path data-controller="flow-connection-line" class="hf-connection-line" style="display:none" />
+          </svg>
+        </div>
+      </div>
+
+      <div data-flow-target="selectionBox" class="hf-selection-box"></div>
+
+      <div class="hf-controls" data-controller="flow-toolbar" data-flow-toolbar-flow-outlet="#flow-canvas">
+        <button data-action="click->flow-toolbar#zoomIn" class="hf-control-btn">+</button>
+        <button data-flow-toolbar-target="zoomLevel" class="hf-control-btn hf-control-btn--zoom-level">100%</button>
+        <button data-action="click->flow-toolbar#zoomOut" class="hf-control-btn">−</button>
+        <button data-action="click->flow-toolbar#fitView" class="hf-control-btn">⊞</button>
+      </div>
+      <div data-controller="flow-minimap" data-flow-minimap-flow-outlet="#flow-canvas"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { Application } from "@hotwired/stimulus"
+    import { registerHotwireFlow } from "./src/index.js?v=9"
+    const app = Application.start()
+    registerHotwireFlow(app)
+  </script>
+</body>
+</html>

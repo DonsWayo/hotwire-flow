@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save / Load — Hotwire Flow</title>
+  <link rel="stylesheet" href="./dist/hotwire-flow.css">
+  <script type="importmap">
+  { "imports": { "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/+esm" } }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; font-family: Inter, system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body>
+  <div class="hf-toolbar-bar" data-controller="flow-toolbar-bar">
+    <div class="hf-toolbar-bar__title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Hotwire Flow &mdash; Save &amp; Load
+    </div>
+    <div class="hf-toolbar-bar__sep"></div>
+    <button class="hf-toolbar-bar__btn" data-action="click->flow-toolbar-bar#saveFlow">Save</button>
+    <button class="hf-toolbar-bar__btn" data-action="click->flow-toolbar-bar#loadFlow">Load</button>
+    <button class="hf-toolbar-bar__btn" data-action="click->flow-toolbar-bar#exportJSON">Export</button>
+    <button class="hf-toolbar-bar__btn" id="clear-btn" data-action="click->flow-toolbar-bar#clearFlow">Clear</button>
+    <div class="hf-toolbar-bar__sep"></div>
+    <div data-controller="flow-layout">
+      <button class="hf-toolbar-bar__btn" data-action="click->flow-layout#layoutVertical">&#8595; Layout</button>
+      <button class="hf-toolbar-bar__btn" data-action="click->flow-layout#layoutHorizontal">&#8594; Layout</button>
+    </div>
+    <div class="hf-toolbar-bar__spacer"></div>
+    <div class="hf-toolbar-bar__stats">
+      <span class="hf-toolbar-bar__stat" data-flow-toolbar-bar-target="nodeCount">0 nodes</span>
+      <span class="hf-toolbar-bar__stat" data-flow-toolbar-bar-target="edgeCount">0 edges</span>
+      <span class="hf-toolbar-bar__stat" data-flow-toolbar-bar-target="zoomLevel">100%</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:48px;left:0;right:0;bottom:0;">
+    <div data-controller="flow" data-flow-fit-view-on-init-value="false" class="hf-canvas" id="flow-canvas">
+      <div data-controller="flow-background" data-flow-background-flow-outlet="#flow-canvas"
+           data-flow-background-variant-value="dots" style="position:absolute;inset:0;"></div>
+
+      <div data-flow-target="pane" class="hf-pane">
+        <div data-flow-target="nodes" class="hf-nodes">
+          <!-- input -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="input" data-flow-node-type-value="input"
+               data-flow-node-x-value="100" data-flow-node-y-value="180"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Input</div>
+            <div class="hf-node__body">
+              <div>Data source entry point</div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="in-r" data-flow-handle-node-id-value="input"
+                 data-flow-handle-position-value="right"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- process -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="process" data-flow-node-type-value="default"
+               data-flow-node-x-value="420" data-flow-node-y-value="180"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Process</div>
+            <div class="hf-node__body">
+              <div>Transform and validate data</div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="pr-l" data-flow-handle-node-id-value="process"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="pr-r" data-flow-handle-node-id-value="process"
+                 data-flow-handle-position-value="right"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- output -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="output" data-flow-node-type-value="output"
+               data-flow-node-x-value="740" data-flow-node-y-value="180"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Output</div>
+            <div class="hf-node__body">
+              <div>Final destination</div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="out-l" data-flow-handle-node-id-value="output"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+        </div>
+
+        <!-- SVG edges AFTER nodes -->
+        <svg style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1">
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e1" data-flow-edge-source-value="input"
+                data-flow-edge-source-handle-value="in-r" data-flow-edge-target-value="process"
+                data-flow-edge-target-handle-value="pr-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e2" data-flow-edge-source-value="process"
+                data-flow-edge-source-handle-value="pr-r" data-flow-edge-target-value="output"
+                data-flow-edge-target-handle-value="out-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { Application } from "@hotwired/stimulus"
+    import { registerHotwireFlow } from "./src/index.js?v=9"
+    const app = Application.start()
+    registerHotwireFlow(app)
+  </script>
+</body>
+</html>

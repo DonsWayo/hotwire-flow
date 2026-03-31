@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2B Order Processing — Hotwire Flow</title>
+  <link rel="stylesheet" href="./dist/hotwire-flow.css">
+  <script type="importmap">
+  { "imports": { "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/+esm" } }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; font-family: Inter, system-ui, sans-serif; }
+    .hf-node { min-width: 180px; }
+    .hf-node__body { font-size: 12px; }
+    .ord-row { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; padding: 2px 0; }
+    .ord-row b { color: #334155; }
+    .ord-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div style="position:fixed;top:0;left:0;right:0;height:44px;background:#0f172a;display:flex;align-items:center;padding:0 16px;z-index:200;border-bottom:1px solid #1e293b;">
+    <h1 style="font-size:14px;font-weight:600;color:#e2e8f0;display:flex;align-items:center;gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      B2B Order Processing Pipeline
+    </h1>
+    <div style="flex:1"></div>
+    <span style="font-size:12px;color:#64748b;margin-right:16px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:4px"></span> Processing</span>
+    <span style="font-size:12px;color:#64748b">Today: 1,247 orders &middot; $847K</span>
+  </div>
+
+  <div style="position:absolute;top:44px;left:0;right:0;bottom:0;">
+    <div data-controller="flow" data-flow-fit-view-on-init-value="false" class="hf-canvas" id="flow-canvas">
+      <div data-controller="flow-background" data-flow-background-flow-outlet="#flow-canvas"
+           data-flow-background-variant-value="dots" style="position:absolute;inset:0;"></div>
+
+      <div data-flow-target="pane" class="hf-pane">
+        <div data-flow-target="nodes" class="hf-nodes">
+          <!-- order -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="order" data-flow-node-type-value="input"
+               data-flow-node-x-value="80" data-flow-node-y-value="200"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Order Intake</div>
+            <div class="hf-node__body">
+              <div class="ord-row"><span>Format</span><b>EDI / JSON</b></div>
+              <div class="ord-row"><span>Today</span><b>1,247</b></div>
+              <div class="ord-row"><span>Value</span><b>$847,230</b></div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="ord-r" data-flow-handle-node-id-value="order"
+                 data-flow-handle-position-value="right"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- validate -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="validate" data-flow-node-type-value="default"
+               data-flow-node-x-value="360" data-flow-node-y-value="80"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Validate</div>
+            <div class="hf-node__body">
+              <div class="ord-row"><span>Rules</span><b>18 active</b></div>
+              <div class="ord-row"><span>Pass rate</span><b>97.2%</b></div>
+              <div class="ord-row"><span>Avg time</span><b>45ms</b></div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="val-l" data-flow-handle-node-id-value="validate"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="val-r" data-flow-handle-node-id-value="validate"
+                 data-flow-handle-position-value="right"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- price -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="price" data-flow-node-type-value="default"
+               data-flow-node-x-value="360" data-flow-node-y-value="340"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Price Engine</div>
+            <div class="hf-node__body">
+              <div class="ord-row"><span>Tiers</span><b>Gold / Silver / Bronze</b></div>
+              <div class="ord-row"><span>Avg discount</span><b>12.4%</b></div>
+              <div class="ord-row"><span>Tax calc</span><b>Auto</b></div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="prc-l" data-flow-handle-node-id-value="price"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="prc-r" data-flow-handle-node-id-value="price"
+                 data-flow-handle-position-value="right"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- pick -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="pick" data-flow-node-type-value="default"
+               data-flow-node-x-value="640" data-flow-node-y-value="200"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Warehouse Pick</div>
+            <div class="hf-node__body">
+              <div class="ord-row"><span>Stations</span><b>4 active</b></div>
+              <div class="ord-row"><span>Items/hr</span><b>340</b></div>
+              <div class="ord-row"><span>Accuracy</span><b>99.7%</b></div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="pkl-l" data-flow-handle-node-id-value="pick"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="pkl-r" data-flow-handle-node-id-value="pick"
+                 data-flow-handle-position-value="right"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- ship -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="ship" data-flow-node-type-value="default"
+               data-flow-node-x-value="920" data-flow-node-y-value="80"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Ship</div>
+            <div class="hf-node__body">
+              <div class="ord-row"><span>Carriers</span><b>FedEx, UPS, DHL</b></div>
+              <div class="ord-row"><span>Avg transit</span><b>2.3 days</b></div>
+              <div class="ord-row"><span>Cost/order</span><b>$8.40</b></div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="shp-l" data-flow-handle-node-id-value="ship"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="shp-r" data-flow-handle-node-id-value="ship"
+                 data-flow-handle-position-value="right"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- invoice -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="invoice" data-flow-node-type-value="default"
+               data-flow-node-x-value="920" data-flow-node-y-value="340"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Invoice</div>
+            <div class="hf-node__body">
+              <div class="ord-row"><span>Terms</span><b>Net 30</b></div>
+              <div class="ord-row"><span>Pending</span><b>$234K</b></div>
+              <div class="ord-row"><span>Overdue</span><b>$12K</b></div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="inv-l" data-flow-handle-node-id-value="invoice"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="inv-r" data-flow-handle-node-id-value="invoice"
+                 data-flow-handle-position-value="right"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--source" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+
+          <!-- complete -->
+          <div data-controller="flow-node" data-flow-node-flow-outlet="#flow-canvas"
+               data-flow-node-id-value="complete" data-flow-node-type-value="output"
+               data-flow-node-x-value="1200" data-flow-node-y-value="200"
+               data-action="pointerdown->flow-node#pointerDown click->flow-node#click"
+               class="hf-node">
+            <div class="hf-node__header">Complete</div>
+            <div class="hf-node__body">
+              <div class="ord-row"><span>Today</span><b>1,189 done</b></div>
+              <div class="ord-row"><span>Revenue</span><b>$802K</b></div>
+              <div class="ord-row"><span>NPS</span><b>72</b></div>
+            </div>
+            <div data-controller="flow-handle" data-flow-handle-flow-outlet="#flow-canvas"
+                 data-flow-handle-id-value="cmpl-l" data-flow-handle-node-id-value="complete"
+                 data-flow-handle-position-value="left"
+                 data-action="pointerdown->flow-handle#pointerDown"
+                 class="hf-handle hf-handle--target" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;cursor:crosshair;"></div>
+          </div>
+        </div>
+
+        <!-- SVG edges AFTER nodes -->
+        <svg style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:1">
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e1" data-flow-edge-source-value="order" data-flow-edge-source-handle-value="ord-r"
+                data-flow-edge-target-value="validate" data-flow-edge-target-handle-value="val-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-label-value="EDI/JSON" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e2" data-flow-edge-source-value="order" data-flow-edge-source-handle-value="ord-r"
+                data-flow-edge-target-value="price" data-flow-edge-target-handle-value="prc-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-label-value="webhook" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e3" data-flow-edge-source-value="validate" data-flow-edge-source-handle-value="val-r"
+                data-flow-edge-target-value="pick" data-flow-edge-target-handle-value="pkl-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-label-value="approved" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e4" data-flow-edge-source-value="price" data-flow-edge-source-handle-value="prc-r"
+                data-flow-edge-target-value="pick" data-flow-edge-target-handle-value="pkl-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-label-value="priced" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e5" data-flow-edge-source-value="pick" data-flow-edge-source-handle-value="pkl-r"
+                data-flow-edge-target-value="ship" data-flow-edge-target-handle-value="shp-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-label-value="picked" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e6" data-flow-edge-source-value="pick" data-flow-edge-source-handle-value="pkl-r"
+                data-flow-edge-target-value="invoice" data-flow-edge-target-handle-value="inv-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-label-value="billing" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e7" data-flow-edge-source-value="ship" data-flow-edge-source-handle-value="shp-r"
+                data-flow-edge-target-value="complete" data-flow-edge-target-handle-value="cmpl-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-label-value="delivered" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+          <path data-controller="flow-edge" data-flow-edge-flow-outlet="#flow-canvas"
+                data-flow-edge-id-value="e8" data-flow-edge-source-value="invoice" data-flow-edge-source-handle-value="inv-r"
+                data-flow-edge-target-value="complete" data-flow-edge-target-handle-value="cmpl-l" data-flow-edge-type-value="smoothstep"
+                data-flow-edge-animated-value="true" data-flow-edge-label-value="paid" data-flow-edge-marker-end-value="arrow" class="hf-edge" />
+        </svg>
+
+      </div>
+
+      <div class="hf-controls" data-controller="flow-toolbar" data-flow-toolbar-flow-outlet="#flow-canvas">
+        <button data-action="click->flow-toolbar#zoomIn" class="hf-control-btn">+</button>
+        <button data-flow-toolbar-target="zoomLevel" class="hf-control-btn hf-control-btn--zoom-level">100%</button>
+        <button data-action="click->flow-toolbar#zoomOut" class="hf-control-btn">-</button>
+        <button data-action="click->flow-toolbar#fitView" class="hf-control-btn">⊞</button>
+      </div>
+      <div data-controller="flow-minimap" data-flow-minimap-flow-outlet="#flow-canvas"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { Application } from "@hotwired/stimulus"
+    import { registerHotwireFlow } from "./src/index.js?v=9"
+    const app = Application.start()
+    registerHotwireFlow(app)
+  </script>
+</body>
+</html>
