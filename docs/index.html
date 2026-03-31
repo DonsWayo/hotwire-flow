@@ -48,18 +48,23 @@
     .header-nav a:hover { color: #3b82f6; }
 
     .hero {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-      padding: 64px 24px 52px; text-align: center;
+      background: #ffffff;
+      padding: 80px 24px 60px; text-align: center;
+      border-bottom: 1px solid #e2e8f0;
     }
     .hero h1 {
-      font-size: 42px; font-weight: 800; color: white;
-      display: flex; align-items: center; justify-content: center; gap: 14px;
-      margin-bottom: 14px;
+      font-size: 48px; font-weight: 800; color: #1e293b;
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      margin-bottom: 20px;
     }
-    .hero h1 svg { filter: drop-shadow(0 0 16px rgba(59,130,246,0.5)); }
+    .hero h1 svg { 
+      width: 56px; 
+      height: 56px;
+      color: #3b82f6;
+    }
     .hero p {
-      font-size: 17px; color: #94a3b8; max-width: 640px; margin: 0 auto 28px;
-      line-height: 1.7;
+      font-size: 18px; color: #64748b; max-width: 640px; margin: 0 auto 32px;
+      line-height: 1.6;
     }
     .hero .badges { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
     .badge {
@@ -173,7 +178,16 @@
 
 <div class="hero">
   <h1>
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <svg width="56" height="56" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="45" fill="#3b82f6" opacity="0.1"/>
+      <path d="M20 35 L40 35 L40 50 L60 50" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M60 50 L80 50 L80 65" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M75 62 L80 65 L75 68" fill="#3b82f6" stroke="none"/>
+      <circle cx="20" cy="35" r="6" fill="white" stroke="#3b82f6" stroke-width="2"/>
+      <circle cx="60" cy="50" r="6" fill="#3b82f6" stroke="#3b82f6" stroke-width="2"/>
+      <circle cx="80" cy="65" r="6" fill="white" stroke="#3b82f6" stroke-width="2"/>
+      <path transform="translate(35, 55) scale(0.25)" fill="#3b82f6" d="m211.75 23-11.57 2.69 10.09-25.69-30.2 38.92 14.41-2.84-13.59 26.54 7.86-1.77-7.95 18.95 24.97-26.97-9.21 2.13z"/>
+    </svg>
     Hotwire Flow
   </h1>
   <p>A React Flow recreation using Hotwire (Stimulus + Tailwind CSS).<br>Build node-based editors, workflow builders, and DAGs with pure HTML.</p>
@@ -279,7 +293,7 @@
   </a>
 
   <a href="node-resizer-demo.html" class="card">
-    <div class="card__preview"><!-- no screenshot yet --></div>
+    <div class="card__preview"><img src="./screenshots/node-resizer-demo.png" alt="Node Resizer" loading="lazy"></div>
     <div class="card__body">
       <div class="card__title">Node Resizer <span class="tag tag--advanced">Advanced</span></div>
       <div class="card__desc">Drag node corners and edges to resize. 8 resize handles (se, sw, ne, nw, n, s, e, w). Supports min/max width/height constraints.</div>
@@ -288,7 +302,7 @@
   </a>
 
   <a href="node-toolbar-demo.html" class="card">
-    <div class="card__preview"><!-- no screenshot yet --></div>
+    <div class="card__preview"><img src="./screenshots/node-toolbar-demo.png" alt="Node Toolbar" loading="lazy"></div>
     <div class="card__body">
       <div class="card__title">Node Toolbar <span class="tag tag--advanced">Advanced</span></div>
       <div class="card__desc">Floating toolbar appears when node is selected. Position on top or bottom with custom offset. Action buttons for edit, copy, delete.</div>
@@ -297,7 +311,7 @@
   </a>
 
   <a href="layout-demo.html" class="card">
-    <div class="card__preview"><!-- no screenshot yet --></div>
+    <div class="card__preview"><img src="./screenshots/layout-demo.png" alt="Auto Layout" loading="lazy"></div>
     <div class="card__body">
       <div class="card__title">Auto Layout <span class="tag tag--advanced">Advanced</span></div>
       <div class="card__desc">Automatically arrange nodes in hierarchical layouts. Vertical (top-bottom) or horizontal (left-right). DAG-based positioning with smooth animation.</div>
