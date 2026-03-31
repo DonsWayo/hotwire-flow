@@ -3,250 +3,611 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hotwire Flow — Examples</title>
+  <title>Hotwire Flow — Node-based Graph Editors with Pure HTML</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --color-primary: #3b82f6;
+      --color-text: #1e293b;
+      --color-text-light: #64748b;
+      --color-bg: #ffffff;
+      --color-bg-subtle: #f8fafc;
+      --color-border: #e2e8f0;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    
     body {
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f8fafc; color: #1e293b; min-height: 100vh;
+      font-family: var(--font-sans);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .hero {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-      padding: 64px 24px 52px; text-align: center;
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 24px;
+      background: var(--color-bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .hero h1 {
-      font-size: 42px; font-weight: 800; color: white;
-      display: flex; align-items: center; justify-content: center; gap: 14px;
-      margin-bottom: 14px;
+    
+    .header-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .hero h1 svg { filter: drop-shadow(0 0 16px rgba(59,130,246,0.5)); }
-    .hero p {
-      font-size: 17px; color: #94a3b8; max-width: 640px; margin: 0 auto 28px;
-      line-height: 1.7;
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--color-text);
+      text-decoration: none;
     }
-    .hero .badges { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+    
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      color: var(--color-primary);
     }
-    .badge--blue { background: rgba(59,130,246,0.15); color: #60a5fa; }
-    .badge--green { background: rgba(34,197,94,0.15); color: #4ade80; }
-    .badge--purple { background: rgba(168,85,247,0.15); color: #c084fc; }
-
-    .grid {
-      max-width: 1200px; margin: 0 auto; padding: 40px 24px;
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    
+    .header-links {
+      display: flex;
       gap: 24px;
     }
+    
+    .header-links a {
+      color: var(--color-text-light);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .header-links a:hover {
+      color: var(--color-primary);
+    }
 
+    /* Hero */
+    .hero {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 80px 24px 60px;
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      color: var(--color-text);
+    }
+    
+    .hero p {
+      font-size: 20px;
+      color: var(--color-text-light);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+    
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .stat {
+      text-align: center;
+    }
+    
+    .stat-value {
+      display: block;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: var(--color-text-light);
+      font-weight: 500;
+    }
+
+    /* Section */
+    section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 24px;
+      border-top: 1px solid var(--color-border);
+    }
+    
+    section:first-of-type {
+      border-top: none;
+      padding-top: 0;
+    }
+    
+    .section-header {
+      margin-bottom: 40px;
+    }
+    
+    .section-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .section-header h2 svg {
+      width: 32px;
+      height: 32px;
+      color: var(--color-primary);
+    }
+    
+    .section-header p {
+      color: var(--color-text-light);
+      font-size: 17px;
+      max-width: 600px;
+    }
+
+    /* Cards Grid */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    
     .card {
-      background: white; border: 1px solid #e2e8f0; border-radius: 16px;
-      overflow: hidden; transition: all 0.25s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      text-decoration: none; color: inherit; display: block;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      background: var(--color-bg);
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
     }
+    
     .card:hover {
-      border-color: #3b82f6; box-shadow: 0 12px 32px rgba(59,130,246,0.12);
-      transform: translateY(-4px);
+      border-color: var(--color-primary);
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+      transform: translateY(-2px);
     }
-    .card__preview {
-      height: 220px; background: #f1f5f9; position: relative; overflow: hidden;
-      border-bottom: 1px solid #e2e8f0;
+    
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      background: #eff6ff;
+      color: var(--color-primary);
     }
-    .card__preview img {
-      width: 100%; height: 100%; object-fit: cover; object-position: top left;
-      transition: transform 0.3s ease;
+    
+    .card-icon svg {
+      width: 24px;
+      height: 24px;
     }
-    .card:hover .card__preview img { transform: scale(1.03); }
-
-    .card__body { padding: 20px 24px; }
-    .card__title {
-      font-size: 17px; font-weight: 700; color: #1e293b;
-      display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    
+    .card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+    
     .tag {
-      padding: 3px 10px; border-radius: 8px; font-size: 10px;
-      font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      display: inline-flex;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    .tag--core { background: #eff6ff; color: #2563eb; }
-    .tag--showcase { background: #f5f3ff; color: #7c3aed; }
-    .tag--advanced { background: #fef3c7; color: #d97706; }
-    .tag--b2b { background: #ecfdf5; color: #059669; }
-    .card__desc {
-      font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 14px;
+    
+    .tag-showcase { background: #f5f3ff; color: #7c3aed; }
+    .tag-core { background: #eff6ff; color: #2563eb; }
+    .tag-b2b { background: #ecfdf5; color: #059669; }
+    .tag-advanced { background: #fef3c7; color: #d97706; }
+    
+    .card p {
+      font-size: 15px;
+      color: var(--color-text-light);
+      line-height: 1.6;
+      flex-grow: 1;
     }
-    .card__link {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 14px; font-weight: 600; color: #3b82f6;
+    
+    .card-footer {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .card-link {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .card:hover .card-link {
+      gap: 8px;
       transition: gap 0.2s ease;
     }
-    .card:hover .card__link { gap: 10px; }
 
-    .footer {
-      text-align: center; padding: 40px 24px;
-      font-size: 14px; color: #94a3b8; border-top: 1px solid #e2e8f0;
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--color-border);
+      padding: 40px 24px;
+      text-align: center;
     }
-    .footer a { color: #3b82f6; text-decoration: none; }
-    .footer a:hover { text-decoration: underline; }
+    
+    footer p {
+      font-size: 14px;
+      color: var(--color-text-light);
+    }
+    
+    footer a {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .footer-badges {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .footer-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--color-text-light);
+    }
+    
+    .footer-badge svg {
+      width: 16px;
+      height: 16px;
+      color: var(--color-primary);
+    }
 
-    .section-title {
-      max-width: 1200px; margin: 0 auto; padding: 32px 24px 8px;
-      font-size: 13px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.5px; color: #94a3b8;
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 36px; }
+      .hero p { font-size: 17px; }
+      .cards { grid-template-columns: 1fr; }
+      .header-links { display: none; }
     }
   </style>
 </head>
 <body>
 
-<div class="hero">
-  <h1>
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-    Hotwire Flow
-  </h1>
-  <p>A React Flow recreation using Hotwire (Stimulus + Tailwind CSS).<br>Build node-based editors, workflow builders, and DAGs with pure HTML.</p>
-  <div class="badges">
-    <span class="badge badge--blue">18 Stimulus Controllers</span>
-    <span class="badge badge--green">200 Tests Passing</span>
-    <span class="badge badge--purple">95% React Flow Parity</span>
+<header>
+  <div class="header-content">
+    <a href="./" class="logo">
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </svg>
+      Hotwire Flow
+    </a>
+    <nav class="header-links">
+      <a href="minimal.html">Quick Start</a>
+      <a href="full-demo.html">Full Demo</a>
+      <a href="./../README.md">Documentation</a>
+    </nav>
   </div>
-</div>
+</header>
 
-<div class="section-title">Showcase</div>
-<div class="grid">
-
-  <a href="full-demo.html" class="card">
-    <div class="card__preview"><img src="../screenshots/full-demo.png" alt="Full Demo" loading="lazy"></div>
-    <div class="card__body">
-      <div class="card__title">Full Workflow Editor <span class="tag tag--showcase">Showcase</span></div>
-      <div class="card__desc">Complete editor with toolbar bar, node sidebar palette, minimap, status bar, context menu, animated edges with labels and arrow markers.</div>
-      <span class="card__link">Open example →</span>
+<main>
+  <div class="hero">
+    <h1>Node-based Graph Editors</h1>
+    <p>A React Flow recreation using <strong>Hotwire</strong> (Stimulus + Tailwind CSS). Build workflow builders, DAGs, and org charts with pure HTML—no React required.</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-value">18</span>
+        <span class="stat-label">Controllers</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">201</span>
+        <span class="stat-label">Tests</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">95%</span>
+        <span class="stat-label">React Flow Parity</span>
+      </div>
     </div>
-  </a>
+  </div>
 
-  <a href="interactive.html" class="card">
-    <div class="card__preview"><img src="../screenshots/interactive.png" alt="Interactive" loading="lazy"></div>
-    <div class="card__body">
-      <div class="card__title">Interactive Playground <span class="tag tag--showcase">Showcase</span></div>
-      <div class="card__desc">All features: dark theme, DnD sidebar with categories (Data Sources / Processing / Outputs), minimap, status bar with keyboard shortcuts.</div>
-      <span class="card__link">Open example →</span>
+  <section>
+    <div class="section-header">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        Showcase Examples
+      </h2>
+      <p>Complete, production-ready implementations demonstrating all features working together.</p>
     </div>
-  </a>
+    
+    <div class="cards">
+      <a href="full-demo.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9h18M9 21V9"/>
+          </svg>
+        </div>
+        <h3>Full Workflow Editor <span class="tag tag-showcase">Showcase</span></h3>
+        <p>Complete editor with toolbar bar, node sidebar palette, minimap, status bar, context menu, animated edges with labels and arrow markers.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
 
-  <a href="dag-pipeline.html" class="card">
-    <div class="card__preview"><img src="../screenshots/dag-pipeline.png" alt="DAG Pipeline" loading="lazy"></div>
-    <div class="card__body">
-      <div class="card__title">Data Pipeline DAG <span class="tag tag--advanced">Advanced</span></div>
-      <div class="card__desc">6-node ETL pipeline: CSV Source → Clean Data → Transform → Validate → Aggregate → Database Sink. Animated smoothstep edges with labels.</div>
-      <span class="card__link">Open example →</span>
+      <a href="interactive.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+        </div>
+        <h3>Interactive Playground <span class="tag tag-showcase">Showcase</span></h3>
+        <p>All features: dark theme, DnD sidebar with categories (Data Sources / Processing / Outputs), minimap, status bar with keyboard shortcuts.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
+
+      <a href="dag-pipeline.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <h3>Data Pipeline DAG <span class="tag tag-advanced">Advanced</span></h3>
+        <p>6-node ETL pipeline: CSV Source → Clean Data → Transform → Validate → Aggregate → Database Sink. Animated smoothstep edges with labels.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
     </div>
-  </a>
+  </section>
 
-</div>
-
-<div class="section-title">B2B / Industrial</div>
-<div class="grid">
-
-  <a href="org-chart.html" class="card">
-    <div class="card__preview"><img src="../screenshots/org-chart.png" alt="Org Chart" loading="lazy"></div>
-    <div class="card__body">
-      <div class="card__title">Company Org Chart <span class="tag tag--b2b">B2B</span></div>
-      <div class="card__desc">Hierarchical org chart: CEO → VP Engineering, VP Sales, VP Product → Directors/PMs. Employee avatars, department colors, 10 people.</div>
-      <span class="card__link">Open example →</span>
+  <section>
+    <div class="section-header">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+        B2B / Industrial
+      </h2>
+      <p>Real-world use cases for enterprise workflow builders and business applications.</p>
     </div>
-  </a>
+    
+    <div class="cards">
+      <a href="org-chart.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a3 3 0 100 6 3 3 0 000-6z"/>
+            <path d="M12 8v4M7 14h10v6H7z"/>
+          </svg>
+        </div>
+        <h3>Company Org Chart <span class="tag tag-b2b">B2B</span></h3>
+        <p>Hierarchical org chart: CEO → VP Engineering, VP Sales, VP Product → Directors/PMs. Employee avatars, department colors, 10 people.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
 
-  <a href="warehouse.html" class="card">
-    <div class="card__preview"><img src="../screenshots/warehouse.png" alt="Warehouse" loading="lazy"></div>
-    <div class="card__body">
-      <div class="card__title">Warehouse Operations <span class="tag tag--b2b">B2B</span></div>
-      <div class="card__desc">7-station warehouse flow: Receiving → QC → Putaway → Storage Zones → Pick & Pack → Shipping. Real-time metrics per station.</div>
-      <span class="card__link">Open example →</span>
+      <a href="warehouse.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <h3>Warehouse Operations <span class="tag tag-b2b">B2B</span></h3>
+        <p>7-station warehouse flow: Receiving → QC → Putaway → Storage Zones → Pick & Pack → Shipping. Real-time metrics per station.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
+
+      <a href="b2b-order.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+        </div>
+        <h3>B2B Order Processing <span class="tag tag-b2b">B2B</span></h3>
+        <p>Enterprise order pipeline: EDI/API Intake → Validate → Price → Warehouse Pick → Ship & Invoice → Complete. 8 edges with labels.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
     </div>
-  </a>
+  </section>
 
-  <a href="b2b-order.html" class="card">
-    <div class="card__preview"><img src="../screenshots/b2b-order.png" alt="B2B Order" loading="lazy"></div>
-    <div class="card__body">
-      <div class="card__title">B2B Order Processing <span class="tag tag--b2b">B2B</span></div>
-      <div class="card__desc">Enterprise order pipeline: EDI/API Intake → Validate → Price → Warehouse Pick → Ship & Invoice → Complete. 8 edges with labels.</div>
-      <span class="card__link">Open example →</span>
+  <section>
+    <div class="section-header">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+          <polyline points="2 17 12 22 22 17"/>
+          <polyline points="2 12 12 17 22 12"/>
+        </svg>
+        Core Features
+      </h2>
+      <p>Individual feature demonstrations showing specific capabilities in isolation.</p>
     </div>
-  </a>
+    
+    <div class="cards">
+      <a href="minimal.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="16"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+        </div>
+        <h3>Minimal Example <span class="tag tag-core">Quick Start</span></h3>
+        <p>The simplest possible setup — just 2 nodes and 1 edge. Pure HTML, CSS, and Stimulus. Perfect starting point for your own implementation.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
 
-</div>
+      <a href="custom-nodes.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M8 12h8M12 8v8"/>
+          </svg>
+        </div>
+        <h3>Custom Node Types <span class="tag tag-core">Core</span></h3>
+        <p>5 custom styled nodes: Note (yellow), Code (dark monospace), Image (gradient placeholder), Decision (yes/no branches), Result.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
 
-<div class="section-title">Core Features</div>
-<div class="grid">
+      <a href="save-load.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
+          </svg>
+        </div>
+        <h3>Save & Load <span class="tag tag-core">Core</span></h3>
+        <p>Persist flow state to localStorage. Save, load, export JSON. Toolbar bar with toObject/fromObject API integration.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
 
-  <a href="custom-nodes.html" class="card">
-    <div class="card__preview"><img src="../screenshots/custom-nodes.png" alt="Custom Nodes" loading="lazy"></div>
-    <div class="card__body">
-      <div class="card__title">Custom Node Types <span class="tag tag--core">Core</span></div>
-      <div class="card__desc">5 custom styled nodes: Note (yellow), Code (dark monospace), Image (gradient placeholder), Decision (yes/no branches), Result.</div>
-      <span class="card__link">Open example →</span>
+      <a href="minimap-demo.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <rect x="7" y="7" width="3" height="3"/>
+            <rect x="14" y="7" width="3" height="3"/>
+            <rect x="7" y="14" width="3" height="3"/>
+            <rect x="14" y="14" width="3" height="3"/>
+          </svg>
+        </div>
+        <h3>Minimap Navigation <span class="tag tag-core">Core</span></h3>
+        <p>9 nodes across a large canvas with dark theme. Minimap shows full overview with viewport indicator. Click to navigate instantly.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
+
+      <a href="node-resizer-demo.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+          </svg>
+        </div>
+        <h3>Node Resizer <span class="tag tag-advanced">Advanced</span></h3>
+        <p>Drag node corners and edges to resize. 8 resize handles (se, sw, ne, nw, n, s, e, w) with min/max width/height constraints.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
+
+      <a href="node-toolbar-demo.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/>
+          </svg>
+        </div>
+        <h3>Node Toolbar <span class="tag tag-advanced">Advanced</span></h3>
+        <p>Floating toolbar appears when node is selected. Position on top or bottom with custom offset. Action buttons for edit, copy, delete.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
+
+      <a href="layout-demo.html" class="card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="4" width="6" height="6"/>
+            <rect x="14" y="4" width="6" height="6"/>
+            <rect x="4" y="14" width="6" height="6"/>
+            <rect x="14" y="14" width="6" height="6"/>
+          </svg>
+        </div>
+        <h3>Auto Layout <span class="tag tag-advanced">Advanced</span></h3>
+        <p>Automatically arrange nodes in hierarchical layouts. Vertical (top-bottom) or horizontal (left-right). DAG-based positioning with smooth animation.</p>
+        <div class="card-footer">
+          <span class="card-link">Open example →</span>
+        </div>
+      </a>
     </div>
-  </a>
+  </section>
+</main>
 
-  <a href="save-load.html" class="card">
-    <div class="card__preview"><img src="../screenshots/save-load.png" alt="Save/Load" loading="lazy"></div>
-    <div class="card__body">
-      <div class="card__title">Save & Load <span class="tag tag--core">Core</span></div>
-      <div class="card__desc">Persist flow state to localStorage. Save, load, export JSON. Toolbar bar with toObject/fromObject API integration.</div>
-      <span class="card__link">Open example →</span>
+<footer>
+  <div class="footer-badges">
+    <div class="footer-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+      Built with Stimulus
     </div>
-  </a>
-
-  <a href="minimap-demo.html" class="card">
-    <div class="card__preview"><img src="../screenshots/minimap-demo.png" alt="Minimap" loading="lazy"></div>
-    <div class="card__body">
-      <div class="card__title">Minimap Navigation <span class="tag tag--core">Core</span></div>
-      <div class="card__desc">9 nodes across a large canvas with dark theme. Minimap shows full overview, click to navigate. Zoom + fit controls.</div>
-      <span class="card__link">Open example →</span>
+    <div class="footer-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </svg>
+      Tailwind CSS
     </div>
-  </a>
-
-  <a href="node-resizer-demo.html" class="card">
-    <div class="card__preview"><!-- no screenshot yet --></div>
-    <div class="card__body">
-      <div class="card__title">Node Resizer <span class="tag tag--advanced">Advanced</span></div>
-      <div class="card__desc">Drag node corners and edges to resize. 8 resize handles (se, sw, ne, nw, n, s, e, w). Supports min/max width/height constraints.</div>
-      <span class="card__link">Open example →</span>
+    <div class="footer-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 2"/>
+      </svg>
+      ES Modules
     </div>
-  </a>
-
-  <a href="node-toolbar-demo.html" class="card">
-    <div class="card__preview"><!-- no screenshot yet --></div>
-    <div class="card__body">
-      <div class="card__title">Node Toolbar <span class="tag tag--advanced">Advanced</span></div>
-      <div class="card__desc">Floating toolbar appears when node is selected. Position on top or bottom with custom offset. Action buttons for edit, copy, delete.</div>
-      <span class="card__link">Open example →</span>
-    </div>
-  </a>
-
-  <a href="layout-demo.html" class="card">
-    <div class="card__preview"><!-- no screenshot yet --></div>
-    <div class="card__body">
-      <div class="card__title">Auto Layout <span class="tag tag--advanced">Advanced</span></div>
-      <div class="card__desc">Automatically arrange nodes in hierarchical layouts. Vertical (top-bottom) or horizontal (left-right). DAG-based positioning with smooth animation.</div>
-      <span class="card__link">Open example →</span>
-    </div>
-  </a>
-
-  <a href="minimal.html" class="card">
-    <div class="card__preview"><img src="../screenshots/minimal.png" alt="Minimal" loading="lazy"></div>
-    <div class="card__body">
-      <div class="card__title">Minimal Example <span class="tag tag--core">Quick Start</span></div>
-      <div class="card__desc">2 nodes connected by an edge. The simplest possible setup — just HTML, CSS, and Stimulus. Pan, zoom, select.</div>
-      <span class="card__link">Open example →</span>
-    </div>
-  </a>
-
-</div>
-
-<div class="footer">
-  Hotwire Flow — Built with <a href="https://stimulus.hotwired.dev">Stimulus</a> + <a href="https://tailwindcss.com">Tailwind CSS</a>
-</div>
+  </div>
+  <p>Hotwire Flow — An alternative approach to building node-based editors without React.</p>
+</footer>
 
 </body>
 </html>
