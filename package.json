@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "npx tailwindcss -i ./src/hotwire-flow.css -o ./dist/hotwire-flow.css --watch",
-    "build": "npx tailwindcss -i ./src/hotwire-flow.css -o ./dist/hotwire-flow.css --minify",
+    "dev": "npx @tailwindcss/cli -i ./src/hotwire-flow.css -o ./dist/hotwire-flow.css --watch",
+    "build": "npx @tailwindcss/cli -i ./src/hotwire-flow.css -o ./dist/hotwire-flow.css --minify",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:unit": "vitest run --dir tests/unit",

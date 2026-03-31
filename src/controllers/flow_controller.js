@@ -393,6 +393,7 @@ export default class extends Controller {
     if (!this.hasNodesTarget) return
     const el = this.nodesTarget.querySelector(`[data-flow-node="${nodeId}"]`); if (!el) return
     el.style.left = `${x}px`; el.style.top = `${y}px`
+    const nd = this._nodes.get(nodeId); if (nd) { nd.position = { x, y } }
     this._emit("nodemove", { nodeId, x, y })
     this._updateEdgesForNode(nodeId)
   }
@@ -477,9 +478,35 @@ export default class extends Controller {
   // ── Data API ────────────────────────────────────────────
 
   _loadInitialElements() {
-    if (this.hasNodesTarget) this.nodesTarget.querySelectorAll("[data-flow-node]").forEach(el => {
-      this._nodes.set(el.dataset.flowNode, { id: el.dataset.flowNode, type: el.dataset.nodeType || "default", position: { x: parseFloat(el.style.left) || 0, y: parseFloat(el.style.top) || 0 }, data: {} })
-    })
+    // Scan nodes: prefer Stimulus value attributes (static HTML), fall back to data-flow-node (set by node controller or tests)
+    const nodeEls = this.element.querySelectorAll("[data-flow-node-id-value]")
+    if (nodeEls.length > 0) {
+      nodeEls.forEach(el => {
+        const id = el.dataset.flowNodeIdValue
+        if (!id) return
+        this._nodes.set(id, { id, type: el.dataset.flowNodeTypeValue || "default", position: { x: parseFloat(el.dataset.flowNodeXValue) || parseFloat(el.style.left) || 0, y: parseFloat(el.dataset.flowNodeYValue) || parseFloat(el.style.top) || 0 }, data: {} })
+      })
+    } else if (this.hasNodesTarget) {
+      this.nodesTarget.querySelectorAll("[data-flow-node]").forEach(el => {
+        this._nodes.set(el.dataset.flowNode, { id: el.dataset.flowNode, type: el.dataset.nodeType || "default", position: { x: parseFloat(el.style.left) || 0, y: parseFloat(el.style.top) || 0 }, data: {} })
+      })
+    }
+    // Scan edges: prefer Stimulus value attributes, fall back to data-edge
+    const edgeEls = this.element.querySelectorAll("[data-flow-edge-id-value]")
+    if (edgeEls.length > 0) {
+      edgeEls.forEach(el => {
+        const id = el.dataset.flowEdgeIdValue
+        if (!id) return
+        this._edges.set(id, {
+          id,
+          source: el.dataset.flowEdgeSourceValue || "",
+          target: el.dataset.flowEdgeTargetValue || "",
+          sourceHandle: el.dataset.flowEdgeSourceHandleValue || "",
+          targetHandle: el.dataset.flowEdgeTargetHandleValue || "",
+          type: el.dataset.flowEdgeTypeValue || "bezier"
+        })
+      })
+    }
   }
 
   addNode(nodeDef) { this._nodes.set(nodeDef.id, nodeDef); this._emit("nodesadd", { nodes: [nodeDef] }) }
