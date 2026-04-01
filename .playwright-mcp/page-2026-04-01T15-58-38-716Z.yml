@@ -1,0 +1,21 @@
+- generic [active] [ref=e1]:
+  - link "Back to Examples" [ref=e3] [cursor=pointer]:
+    - /url: ./
+    - img [ref=e4]
+    - text: Back to Examples
+  - generic [ref=e7]:
+    - generic [ref=e9]:
+      - img
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: Input
+          - generic [ref=e13]: Start here
+        - generic [ref=e15]:
+          - generic [ref=e17]: Output
+          - generic [ref=e18]: End here
+        - img
+    - generic [ref=e21]:
+      - button "+" [ref=e22] [cursor=pointer]
+      - button "185%" [ref=e23] [cursor=pointer]
+      - button "−" [ref=e24] [cursor=pointer]
+      - button "⊡" [ref=e25] [cursor=pointer]

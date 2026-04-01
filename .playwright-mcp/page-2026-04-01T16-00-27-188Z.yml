@@ -1,0 +1,50 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Back" [ref=e3] [cursor=pointer]:
+      - /url: ./
+      - img
+      - text: Back
+    - heading "Custom Node Types" [level=1] [ref=e5]:
+      - img [ref=e6]
+      - text: Custom Node Types
+    - generic [ref=e8]: Any HTML works as node content
+  - generic [ref=e10]:
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e15]: 📝 Note
+          - generic [ref=e17]: "Remember to validate all inputs before processing. Edge cases: null, empty string, negative numbers."
+        - generic [ref=e19]:
+          - generic [ref=e20]: 💻 Code
+          - generic [ref=e21]:
+            - generic [ref=e22]: "1const x = input.map(i => {"
+            - generic [ref=e23]: 2 return i * 2
+            - generic [ref=e24]: "3})"
+        - generic [ref=e27]:
+          - generic [ref=e28]: 📷 Image
+          - generic [ref=e30]: Preview
+        - generic [ref=e32]:
+          - generic [ref=e33]: ⚠ Decision
+          - generic [ref=e34]:
+            - generic [ref=e35]: Is value > threshold?
+            - generic [ref=e36]:
+              - generic [ref=e37]: ✓ Yes
+              - generic [ref=e38]: ✗ No
+        - generic [ref=e41]:
+          - generic [ref=e42]: ✔ Result
+          - generic [ref=e44]: Pipeline complete
+      - img:
+        - generic [ref=e62]:
+          - generic: notes
+        - generic [ref=e64]:
+          - generic: assets
+        - generic [ref=e66]:
+          - generic: output
+        - generic [ref=e68]:
+          - generic: approved
+    - generic [ref=e70]:
+      - button "+" [ref=e71] [cursor=pointer]
+      - button "100%"
+      - button "-" [ref=e72] [cursor=pointer]
+      - button "⊞" [ref=e73] [cursor=pointer]
+    - img [ref=e75]

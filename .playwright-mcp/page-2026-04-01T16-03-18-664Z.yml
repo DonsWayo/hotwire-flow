@@ -1,0 +1,161 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Hotwire Flow" [ref=e4] [cursor=pointer]:
+        - /url: ./
+        - img [ref=e5]
+        - text: Hotwire Flow
+      - navigation [ref=e12]:
+        - link "Quick Start" [ref=e13] [cursor=pointer]:
+          - /url: minimal.html
+        - link "Full Demo" [ref=e14] [cursor=pointer]:
+          - /url: full-demo.html
+  - generic [ref=e15]:
+    - heading "Hotwire Flow" [level=1] [ref=e16]:
+      - img [ref=e17]
+      - text: Hotwire Flow
+    - paragraph [ref=e24]:
+      - text: A React Flow recreation using Hotwire (Stimulus + Tailwind CSS).
+      - text: Build node-based editors, workflow builders, and DAGs with pure HTML.
+    - generic [ref=e25]:
+      - generic [ref=e26]: 18 Stimulus Controllers
+      - generic [ref=e27]: 200 Tests Passing
+      - generic [ref=e28]: 95% React Flow Parity
+  - generic [ref=e29]: Showcase
+  - generic [ref=e30]:
+    - link "Full Demo Full Workflow Editor Showcase Complete editor with toolbar bar, node sidebar palette, minimap, status bar, context menu, animated edges with labels and arrow markers. Open example →" [ref=e31] [cursor=pointer]:
+      - /url: full-demo.html
+      - img "Full Demo" [ref=e33]
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - text: Full Workflow Editor
+          - generic [ref=e36]: Showcase
+        - generic [ref=e37]: Complete editor with toolbar bar, node sidebar palette, minimap, status bar, context menu, animated edges with labels and arrow markers.
+        - generic [ref=e38]: Open example →
+    - 'link "Interactive Interactive Playground Showcase All features: dark theme, DnD sidebar with categories (Data Sources / Processing / Outputs), minimap, status bar with keyboard shortcuts. Open example →" [ref=e39] [cursor=pointer]':
+      - /url: interactive.html
+      - img "Interactive" [ref=e41]
+      - generic [ref=e42]:
+        - generic [ref=e43]:
+          - text: Interactive Playground
+          - generic [ref=e44]: Showcase
+        - generic [ref=e45]: "All features: dark theme, DnD sidebar with categories (Data Sources / Processing / Outputs), minimap, status bar with keyboard shortcuts."
+        - generic [ref=e46]: Open example →
+    - 'link "DAG Pipeline Data Pipeline DAG Advanced 6-node ETL pipeline: CSV Source → Clean Data → Transform → Validate → Aggregate → Database Sink. Animated smoothstep edges with labels. Open example →" [ref=e47] [cursor=pointer]':
+      - /url: dag-pipeline.html
+      - img "DAG Pipeline" [ref=e49]
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - text: Data Pipeline DAG
+          - generic [ref=e52]: Advanced
+        - generic [ref=e53]: "6-node ETL pipeline: CSV Source → Clean Data → Transform → Validate → Aggregate → Database Sink. Animated smoothstep edges with labels."
+        - generic [ref=e54]: Open example →
+  - generic [ref=e55]: B2B / Industrial
+  - generic [ref=e56]:
+    - 'link "Org Chart Company Org Chart B2B Hierarchical org chart: CEO → VP Engineering, VP Sales, VP Product → Directors/PMs. Employee avatars, department colors, 10 people. Open example →" [ref=e57] [cursor=pointer]':
+      - /url: org-chart.html
+      - img "Org Chart" [ref=e59]
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - text: Company Org Chart
+          - generic [ref=e62]: B2B
+        - generic [ref=e63]: "Hierarchical org chart: CEO → VP Engineering, VP Sales, VP Product → Directors/PMs. Employee avatars, department colors, 10 people."
+        - generic [ref=e64]: Open example →
+    - 'link "Warehouse Warehouse Operations B2B 7-station warehouse flow: Receiving → QC → Putaway → Storage Zones → Pick & Pack → Shipping. Real-time metrics per station. Open example →" [ref=e65] [cursor=pointer]':
+      - /url: warehouse.html
+      - img "Warehouse" [ref=e67]
+      - generic [ref=e68]:
+        - generic [ref=e69]:
+          - text: Warehouse Operations
+          - generic [ref=e70]: B2B
+        - generic [ref=e71]: "7-station warehouse flow: Receiving → QC → Putaway → Storage Zones → Pick & Pack → Shipping. Real-time metrics per station."
+        - generic [ref=e72]: Open example →
+    - 'link "B2B Order B2B Order Processing B2B Enterprise order pipeline: EDI/API Intake → Validate → Price → Warehouse Pick → Ship & Invoice → Complete. 8 edges with labels. Open example →" [ref=e73] [cursor=pointer]':
+      - /url: b2b-order.html
+      - img "B2B Order" [ref=e75]
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - text: B2B Order Processing
+          - generic [ref=e78]: B2B
+        - generic [ref=e79]: "Enterprise order pipeline: EDI/API Intake → Validate → Price → Warehouse Pick → Ship & Invoice → Complete. 8 edges with labels."
+        - generic [ref=e80]: Open example →
+  - generic [ref=e81]: Core Features
+  - generic [ref=e82]:
+    - 'link "Custom Nodes Custom Node Types Core 5 custom styled nodes: Note (yellow), Code (dark monospace), Image (gradient placeholder), Decision (yes/no branches), Result. Open example →" [ref=e83] [cursor=pointer]':
+      - /url: custom-nodes.html
+      - img "Custom Nodes" [ref=e85]
+      - generic [ref=e86]:
+        - generic [ref=e87]:
+          - text: Custom Node Types
+          - generic [ref=e88]: Core
+        - generic [ref=e89]: "5 custom styled nodes: Note (yellow), Code (dark monospace), Image (gradient placeholder), Decision (yes/no branches), Result."
+        - generic [ref=e90]: Open example →
+    - link "Save/Load Save & Load Core Persist flow state to localStorage. Save, load, export JSON. Toolbar bar with toObject/fromObject API integration. Open example →" [ref=e91] [cursor=pointer]:
+      - /url: save-load.html
+      - img "Save/Load" [ref=e93]
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - text: Save & Load
+          - generic [ref=e96]: Core
+        - generic [ref=e97]: Persist flow state to localStorage. Save, load, export JSON. Toolbar bar with toObject/fromObject API integration.
+        - generic [ref=e98]: Open example →
+    - link "Minimap Minimap Navigation Core 9 nodes across a large canvas with dark theme. Minimap shows full overview, click to navigate. Zoom + fit controls. Open example →" [ref=e99] [cursor=pointer]:
+      - /url: minimap-demo.html
+      - img "Minimap" [ref=e101]
+      - generic [ref=e102]:
+        - generic [ref=e103]:
+          - text: Minimap Navigation
+          - generic [ref=e104]: Core
+        - generic [ref=e105]: 9 nodes across a large canvas with dark theme. Minimap shows full overview, click to navigate. Zoom + fit controls.
+        - generic [ref=e106]: Open example →
+    - link "Node Resizer Node Resizer Advanced Drag node corners and edges to resize. 8 resize handles (se, sw, ne, nw, n, s, e, w). Supports min/max width/height constraints. Open example →" [ref=e107] [cursor=pointer]:
+      - /url: node-resizer-demo.html
+      - img "Node Resizer" [ref=e109]
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - text: Node Resizer
+          - generic [ref=e112]: Advanced
+        - generic [ref=e113]: Drag node corners and edges to resize. 8 resize handles (se, sw, ne, nw, n, s, e, w). Supports min/max width/height constraints.
+        - generic [ref=e114]: Open example →
+    - link "Node Toolbar Node Toolbar Advanced Floating toolbar appears when node is selected. Position on top or bottom with custom offset. Action buttons for edit, copy, delete. Open example →" [ref=e115] [cursor=pointer]:
+      - /url: node-toolbar-demo.html
+      - img "Node Toolbar" [ref=e117]
+      - generic [ref=e118]:
+        - generic [ref=e119]:
+          - text: Node Toolbar
+          - generic [ref=e120]: Advanced
+        - generic [ref=e121]: Floating toolbar appears when node is selected. Position on top or bottom with custom offset. Action buttons for edit, copy, delete.
+        - generic [ref=e122]: Open example →
+    - link "Auto Layout Auto Layout Advanced Automatically arrange nodes in hierarchical layouts. Vertical (top-bottom) or horizontal (left-right). DAG-based positioning with smooth animation. Open example →" [ref=e123] [cursor=pointer]:
+      - /url: layout-demo.html
+      - img "Auto Layout" [ref=e125]
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - text: Auto Layout
+          - generic [ref=e128]: Advanced
+        - generic [ref=e129]: Automatically arrange nodes in hierarchical layouts. Vertical (top-bottom) or horizontal (left-right). DAG-based positioning with smooth animation.
+        - generic [ref=e130]: Open example →
+    - link "Minimal Minimal Example Quick Start 2 nodes connected by an edge. The simplest possible setup — just HTML, CSS, and Stimulus. Pan, zoom, select. Open example →" [ref=e131] [cursor=pointer]:
+      - /url: minimal.html
+      - img "Minimal" [ref=e133]
+      - generic [ref=e134]:
+        - generic [ref=e135]:
+          - text: Minimal Example
+          - generic [ref=e136]: Quick Start
+        - generic [ref=e137]: 2 nodes connected by an edge. The simplest possible setup — just HTML, CSS, and Stimulus. Pan, zoom, select.
+        - generic [ref=e138]: Open example →
+  - generic [ref=e139]:
+    - generic [ref=e140]:
+      - generic [ref=e141]:
+        - img [ref=e142]
+        - text: Built with Stimulus
+      - generic [ref=e144]:
+        - img [ref=e145]
+        - text: Tailwind CSS
+    - paragraph [ref=e147]:
+      - text: Hotwire Flow — Built with
+      - link "Stimulus" [ref=e148] [cursor=pointer]:
+        - /url: https://stimulus.hotwired.dev
+      - text: +
+      - link "Tailwind CSS" [ref=e149] [cursor=pointer]:
+        - /url: https://tailwindcss.com

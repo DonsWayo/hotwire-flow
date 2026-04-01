@@ -23,36 +23,71 @@
   }
 
   /* ═══════════════════════════════════════════════
-     EDGES (SVG paths)
+     EDGES (SVG) — React Flow style
      ═══════════════════════════════════════════════ */
   .hf-edges {
     @apply absolute inset-0 overflow-visible pointer-events-none;
     z-index: 1;
   }
-  .hf-edges path {
+  .hf-edges svg {
+    overflow: visible;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* Edge path — matches React Flow: thin stroke, subtle color */
+  .hf-edge {
+    fill: none;
+    stroke: #b1b1b7;
+    color: #b1b1b7; /* currentColor for markers */
+    stroke-width: 1.5;
     pointer-events: visibleStroke;
     cursor: pointer;
   }
-
-  .hf-edge {
-    fill: none;
-    stroke: #64748b;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    transition: stroke 0.15s ease, stroke-width 0.15s ease;
-  }
   .hf-edge:hover {
-    stroke: #3b82f6;
-    stroke-width: 3.5;
+    stroke: #555;
+    color: #555;
   }
   .hf-edge.selected {
-    stroke: #3b82f6;
-    stroke-width: 3.5;
+    stroke: #555;
+    color: #555;
   }
   .hf-edge.animated {
-    stroke-dasharray: 8 4;
-    animation: hf-dash 0.6s linear infinite;
+    stroke-dasharray: 5;
+    animation: hf-dash 0.5s linear infinite;
   }
+
+  /* Interaction path — invisible wide stroke for easy clicking */
+  .hf-edge-interaction {
+    fill: none;
+    stroke: transparent;
+    stroke-opacity: 0;
+    pointer-events: stroke;
+    cursor: pointer;
+  }
+
+  /* Edge updater handles (reconnect) */
+  .hf-edge-updater {
+    cursor: move;
+    pointer-events: all;
+  }
+
+  /* Edge label — native SVG text (React Flow's EdgeText) */
+  .hf-edge-textwrapper {
+    pointer-events: all;
+  }
+  .hf-edge-textbg {
+    fill: #ffffff;
+  }
+  .hf-edge-text {
+    font-size: 10px;
+    fill: #64748b;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Arrowhead markers — colors are set as presentation attributes in JS,
+     matching the edge stroke color resolved at connect() time. */
 
   /* Connection line (live while dragging) */
   .hf-connection-line {
@@ -60,11 +95,11 @@
     z-index: 5;
   }
   .hf-connection-line path {
-    stroke: #3b82f6;
-    stroke-width: 2.5;
+    stroke: #b1b1b7;
+    stroke-width: 1;
     fill: none;
-    stroke-dasharray: 6 4;
-    animation: hf-dash 0.4s linear infinite;
+    stroke-dasharray: 5;
+    animation: hf-dash 0.5s linear infinite;
     stroke-linecap: round;
   }
 

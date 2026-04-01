@@ -1,0 +1,79 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Back" [ref=e3] [cursor=pointer]:
+      - /url: ./
+      - img [ref=e4]
+      - text: Back
+    - heading "Data Pipeline DAG" [level=1] [ref=e6]:
+      - img [ref=e7]
+      - text: Data Pipeline
+      - generic [ref=e9]: DAG
+    - generic [ref=e10]:
+      - generic [ref=e11]: Running
+      - generic [ref=e13]: 6 nodes · 6 edges
+  - generic [ref=e15]:
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: CSV Source
+          - generic [ref=e21]:
+            - generic [ref=e22]: Reads raw CSV from S3 bucket
+            - generic [ref=e23]:
+              - generic [ref=e24]: Format
+              - generic [ref=e25]: CSV
+            - generic [ref=e26]:
+              - generic [ref=e27]: Rows
+              - generic [ref=e28]: 1.2M
+            - generic [ref=e29]:
+              - generic [ref=e30]: 42 cols
+              - generic [ref=e31]: 98% uptime
+        - generic [ref=e33]:
+          - generic [ref=e34]: Clean
+          - generic [ref=e35]:
+            - generic [ref=e36]: Remove nulls, dedupe rows
+            - generic [ref=e37]:
+              - generic [ref=e38]: Strategy
+              - generic [ref=e39]: Dedupe
+            - generic [ref=e41]: 99.2% pass
+        - generic [ref=e44]:
+          - generic [ref=e45]: Transform
+          - generic [ref=e46]:
+            - generic [ref=e47]: Type casting, rename cols
+            - generic [ref=e48]:
+              - generic [ref=e49]: Output
+              - generic [ref=e50]: Parquet
+            - generic [ref=e52]: 18 transforms
+        - generic [ref=e55]:
+          - generic [ref=e56]: Validate
+          - generic [ref=e57]:
+            - generic [ref=e58]: Schema validation, anomaly check
+            - generic [ref=e59]:
+              - generic [ref=e60]: Rules
+              - generic [ref=e61]: 24 active
+            - generic [ref=e63]: 0.3% reject
+        - generic [ref=e66]:
+          - generic [ref=e67]: Aggregate
+          - generic [ref=e68]:
+            - generic [ref=e69]: Group by region, sum totals
+            - generic [ref=e70]:
+              - generic [ref=e71]: Groups
+              - generic [ref=e72]: Region
+            - generic [ref=e74]: 5 aggregates
+        - generic [ref=e77]:
+          - generic [ref=e78]: Data Warehouse
+          - generic [ref=e79]:
+            - generic [ref=e80]: Write to PostgreSQL warehouse
+            - generic [ref=e81]:
+              - generic [ref=e82]: Target
+              - generic [ref=e83]: PostgreSQL
+            - generic [ref=e84]:
+              - generic [ref=e85]: Table
+              - generic [ref=e86]: analytics.events
+            - generic [ref=e88]: 4.8M rows
+      - img
+    - generic [ref=e102]:
+      - button "+" [ref=e103] [cursor=pointer]
+      - button "100%"
+      - button "-" [ref=e104] [cursor=pointer]
+      - button "⊞" [ref=e105] [cursor=pointer]
+    - img [ref=e107]

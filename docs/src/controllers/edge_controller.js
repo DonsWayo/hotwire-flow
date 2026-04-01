@@ -1,7 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
-// SVG edge rendering — professional-quality bezier, smoothstep, step, straight.
-// Ported from React Flow's getBezierPath and getSmoothStepPath algorithms.
+/**
+ * Edge Controller — Production-quality SVG edge rendering.
+ * Ported from React Flow (xyflow/xyflow) bezier-edge.ts, smoothstep-edge.ts, straight-edge.ts,
+ * MarkerDefinitions.tsx, MarkerSymbols.tsx, EdgeText.tsx, and BaseEdge.tsx.
+ *
+ * Supports: bezier, smoothstep, step, straight edge types.
+ * Features: arrow markers (open + closed), edge labels with bg, hover/select/animated states,
+ *           interaction path for wide click area, reconnect handles.
+ */
 export default class extends Controller {
   static values = {
     id: String,
@@ -14,16 +21,17 @@ export default class extends Controller {
     label: { type: String, default: "" },
     labelStyle: { type: Object, default: {} },
     labelShowBg: { type: Boolean, default: true },
-    labelBgPadding: { type: Array, default: [5, 5] },
-    labelBgBorderRadius: { type: Number, default: 4 },
+    labelBgStyle: { type: Object, default: {} },
+    labelBgPadding: { type: Array, default: [2, 4] },
+    labelBgBorderRadius: { type: Number, default: 2 },
     hidden: { type: Boolean, default: false },
     deletable: { type: Boolean, default: true },
     selectable: { type: Boolean, default: true },
     interactionWidth: { type: Number, default: 20 },
     reconnectable: { type: Boolean, default: true },
     markerStart: { type: String, default: "" },
-    markerEnd: { type: String, default: "arrow" },
-    markerColor: { type: String, default: "#94a3b8" },
+    markerEnd: { type: String, default: "arrowclosed" },
+    markerColor: { type: String, default: "" },
     style: { type: Object, default: {} },
     curvature: { type: Number, default: 0.25 },
     borderRadius: { type: Number, default: 5 },
@@ -36,14 +44,18 @@ export default class extends Controller {
     if (this.animatedValue) this.element.classList.add("animated")
     if (this.hiddenValue) this.element.style.display = "none"
     if (this.styleValue && typeof this.styleValue === "object") Object.assign(this.element.style, this.styleValue)
+    // Set stroke-width as a presentation attribute so markerUnits="strokeWidth" works in all browsers
+    if (!this.element.getAttribute("stroke-width")) {
+      this.element.setAttribute("stroke-width", "1.5")
+    }
 
     this._interactionPath = null
-    this._labelEl = null
+    this._labelGroup = null
     this._sourceHandle = null
     this._targetHandle = null
+
     this._createInteractionPath()
     if (this.reconnectableValue) this._createReconnectHandles()
-    if (this.labelValue) this._createLabel()
     this._setupMarkers()
 
     this._onNodeMove = () => this._updatePath()
@@ -58,7 +70,7 @@ export default class extends Controller {
     if (this._retryTimer) clearTimeout(this._retryTimer)
     if (this._interactionPath && this._onInteractionClick) this._interactionPath.removeEventListener("click", this._onInteractionClick)
     this._interactionPath?.remove()
-    this._labelEl?.remove()
+    this._labelGroup?.remove()
     if (this._sourceHandle) {
       this._sourceHandle.removeEventListener("pointerdown", this._onSourceDrag)
       this._sourceHandle.remove()
@@ -75,7 +87,12 @@ export default class extends Controller {
     this._retryTimer = setTimeout(() => this._updatePath(), delay)
   }
 
-  _findNodesContainer() { return this.element.closest("svg")?.parentElement?.querySelector('[data-flow-target="nodes"]') || document.querySelector('[data-flow-target="nodes"]') }
+  _findNodesContainer() {
+    return this.element.closest("svg")?.parentElement?.querySelector('[data-flow-target="nodes"]') ||
+           document.querySelector('[data-flow-target="nodes"]')
+  }
+
+  // ═══════════ PATH UPDATE ═══════════
 
   _updatePath() {
     const container = this._findNodesContainer()
@@ -87,15 +104,61 @@ export default class extends Controller {
 
     const sp = this._getHandlePosition(sourceEl, this.sourceHandleValue)
     const tp = this._getHandlePosition(targetEl, this.targetHandleValue)
-    const { path, labelX, labelY } = this._computePath(sp, tp)
+
+    // Offset endpoints so arrowheads sit at handle positions, not inside nodes.
+    // With refX=10 on a viewBox="0 0 10 10" marker, the arrow tip lands exactly
+    // at the path endpoint — no additional offset needed.
+    const MARKER_OFFSET = 0
+    let sx = sp.x, sy = sp.y, tx = tp.x, ty = tp.y
+
+    if (this.markerStartValue) {
+      const off = this._getMarkerOffset(sp.position, MARKER_OFFSET)
+      sx += off.x; sy += off.y
+    }
+    if (this.markerEndValue) {
+      const off = this._getMarkerOffset(tp.position, MARKER_OFFSET)
+      tx += off.x; ty += off.y
+    }
+
+    let result
+    switch (this.typeValue) {
+      case "straight":
+        result = this._getStraightPath(sx, sy, tx, ty)
+        break
+      case "step":
+        result = this._getSmoothStepPath(sx, sy, sp.position, tx, ty, tp.position, 0)
+        break
+      case "smoothstep":
+        result = this._getSmoothStepPath(sx, sy, sp.position, tx, ty, tp.position, this.borderRadiusValue)
+        break
+      default: // bezier
+        result = this._getBezierPath(sx, sy, sp.position, tx, ty, tp.position)
+        break
+    }
+
+    const [path, labelX, labelY] = result
 
     this.element.setAttribute("d", path)
     if (this._interactionPath) this._interactionPath.setAttribute("d", path)
-    if (this._labelEl) {
-      this._labelEl.setAttribute("x", String(labelX - 30))
-      this._labelEl.setAttribute("y", String(labelY - 12))
-    }
+    this._updateLabel(labelX, labelY)
     this._updateReconnectHandlePositions()
+  }
+
+  // Returns the offset direction for pulling path endpoint back from the node edge,
+  // so the arrowhead tip lands exactly on the handle, not inside the node.
+  _getMarkerOffset(position, distance) {
+    // Pull endpoint back so arrowhead tip lands exactly at the handle position.
+    // "left" handle: edge arrives from the left, so pull endpoint left (−x).
+    // "right" handle: edge arrives from the right, so pull endpoint right (+x).
+    // "top" handle: edge arrives from above, so pull endpoint up (−y).
+    // "bottom" handle: edge arrives from below, so pull endpoint down (+y).
+    switch (position) {
+      case "left":   return { x: -distance, y: 0 }
+      case "right":  return { x:  distance, y: 0 }
+      case "top":    return { x: 0, y: -distance }
+      case "bottom": return { x: 0, y:  distance }
+      default:       return { x:  distance, y: 0 }
+    }
   }
 
   _getHandlePosition(el, pos) {
@@ -110,192 +173,227 @@ export default class extends Controller {
     }
   }
 
-  _computePath(source, target) {
-    const s = { x: source.x, y: source.y }
-    const t = { x: target.x, y: target.y }
-    const sp = source.position
-    const tp = target.position
+  // ═══════════ BEZIER — exact React Flow port ═══════════
 
-    switch (this.typeValue) {
-      case "straight": return this._straightPath(s, t)
-      case "step": return this._stepPath(s, t, sp, tp)
-      case "smoothstep": return this._smoothStepPath(s, t, sp, tp)
-      default: return this._bezierPath(s, t, sp, tp)
-    }
-  }
-
-  // ═══════════ BEZIER (React Flow's getBezierPath) ═══════════
-
-  _bezierPath(s, t, sp, tp) {
+  _getBezierPath(sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition) {
     const curvature = this.curvatureValue
-    const dist = Math.hypot(t.x - s.x, t.y - s.y)
-    const cpDist = Math.max(dist * curvature, 25)
-
-    // Fan-out: offset control point based on edge index to prevent crossings
-    const fanOffset = this._getFanOffset()
-
-    const cp1 = this._getControlPoint(s, sp, cpDist, fanOffset)
-    const cp2 = this._getControlPoint(t, tp, cpDist)
-
-    const path = `M ${s.x},${s.y} C ${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${t.x},${t.y}`
-    const labelX = (s.x + t.x) / 2
-    const labelY = (s.y + t.y) / 2
-    return { path, labelX, labelY }
+    const [sourceControlX, sourceControlY] = this._getControlWithCurvature(
+      sourcePosition, sourceX, sourceY, targetX, targetY, curvature
+    )
+    const [targetControlX, targetControlY] = this._getControlWithCurvature(
+      targetPosition, targetX, targetY, sourceX, sourceY, curvature
+    )
+    const [labelX, labelY] = this._getBezierEdgeCenter(
+      sourceX, sourceY, targetX, targetY,
+      sourceControlX, sourceControlY, targetControlX, targetControlY
+    )
+    const path = `M${sourceX},${sourceY} C${sourceControlX},${sourceControlY} ${targetControlX},${targetControlY} ${targetX},${targetY}`
+    return [path, labelX, labelY]
   }
 
-  _getControlPoint(point, position, distance, fanOffset = 0) {
-    switch (position) {
-      case "top":    return { x: point.x + fanOffset, y: point.y - distance }
-      case "bottom": return { x: point.x + fanOffset, y: point.y + distance }
-      case "left":   return { x: point.x - distance, y: point.y + fanOffset }
-      default:       return { x: point.x + distance, y: point.y + fanOffset }
+  // React Flow: calculateControlOffset
+  _calculateControlOffset(distance, curvature) {
+    if (distance >= 0) return 0.5 * distance
+    return curvature * 25 * Math.sqrt(-distance)
+  }
+
+  // React Flow: getControlWithCurvature
+  _getControlWithCurvature(pos, x1, y1, x2, y2, c) {
+    switch (pos) {
+      case "left":   return [x1 - this._calculateControlOffset(x1 - x2, c), y1]
+      case "right":  return [x1 + this._calculateControlOffset(x2 - x1, c), y1]
+      case "top":    return [x1, y1 - this._calculateControlOffset(y1 - y2, c)]
+      case "bottom": return [x1, y1 + this._calculateControlOffset(y2 - y1, c)]
+      default:       return [x1 + this._calculateControlOffset(x2 - x1, c), y1]
     }
   }
 
-  // Calculate fan-out offset based on edge's position among siblings from same source
-  _getFanOffset() {
-    const container = this._findNodesContainer()
-    if (!container) return 0
-
-    // Find all edges from the same source
-    const siblings = []
-    container.closest("svg")?.parentElement?.querySelectorAll("svg path.hf-edge, svg + div svg path.hf-edge")
-
-    // Try to find sibling edges via the SVG parent
-    const allEdges = document.querySelectorAll(`[data-flow-edge-source-value="${this.sourceValue}"]`)
-    let myIndex = 0
-    let totalCount = 0
-
-    allEdges.forEach((edge, i) => {
-      if (edge.dataset.flowEdgeIdValue === this.idValue) myIndex = i
-      totalCount++
-    })
-
-    if (totalCount <= 1) return 0
-
-    // Spread edges vertically: -15, 0, +15 for 3 edges from same source
-    const spacing = 25
-    const center = (totalCount - 1) / 2
-    return (myIndex - center) * spacing
+  // React Flow: getBezierEdgeCenter — cubic bezier t=0.5 midpoint
+  _getBezierEdgeCenter(sourceX, sourceY, targetX, targetY, scx, scy, tcx, tcy) {
+    const centerX = sourceX * 0.125 + scx * 0.375 + tcx * 0.375 + targetX * 0.125
+    const centerY = sourceY * 0.125 + scy * 0.375 + tcy * 0.375 + targetY * 0.125
+    return [centerX, centerY]
   }
 
-  // ═══════════ SMOOTHSTEP (React Flow's getSmoothStepPath) ═══════════
+  // ═══════════ SMOOTHSTEP — exact React Flow port ═══════════
 
-  _smoothStepPath(s, t, sp, tp) {
+  _getSmoothStepPath(sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, borderRadius) {
     const offset = this.offsetValue
-    const borderRadius = this.borderRadiusValue
-    const fanOffset = this._getFanOffset()
 
-    // Apply fan offset to source
-    const s2 = { x: s.x, y: s.y + fanOffset }
-    const t2 = { x: t.x, y: t.y }
+    const [points, labelX, labelY] = this._getStepPoints(
+      { x: sourceX, y: sourceY }, sourcePosition,
+      { x: targetX, y: targetY }, targetPosition,
+      offset
+    )
 
-    const points = this._getStepPoints(s2, t2, sp, tp, offset)
-    if (points.length < 2) return { path: `M ${s.x},${s.y} L ${t.x},${t.y}`, labelX: (s.x + t.x) / 2, labelY: (s.y + t.y) / 2 }
+    let path = `M${points[0].x} ${points[0].y}`
 
-    let path = `M ${s.x},${s.y}`
+    for (let i = 1; i < points.length - 1; i++) {
+      path += this._getBend(points[i - 1], points[i], points[i + 1], borderRadius)
+    }
 
-    for (let i = 1; i < points.length; i++) {
-      const prev = points[i - 1]
-      const curr = points[i]
+    path += `L${points[points.length - 1].x} ${points[points.length - 1].y}`
 
-      if (i < points.length - 1) {
-        const next = points[i + 1]
-        const bend = this._getBend(prev, curr, next, borderRadius)
-        path += bend
+    return [path, labelX, labelY]
+  }
+
+  // React Flow: getPoints — orthogonal edge routing
+  _getStepPoints(source, sourcePosition, target, targetPosition, offset) {
+    const handleDirections = {
+      left:   { x: -1, y: 0 },
+      right:  { x: 1, y: 0 },
+      top:    { x: 0, y: -1 },
+      bottom: { x: 0, y: 1 }
+    }
+
+    const sourceDir = handleDirections[sourcePosition] || handleDirections.right
+    const targetDir = handleDirections[targetPosition] || handleDirections.left
+
+    const sourceGapped = { x: source.x + sourceDir.x * offset, y: source.y + sourceDir.y * offset }
+    const targetGapped = { x: target.x + targetDir.x * offset, y: target.y + targetDir.y * offset }
+
+    // Direction from source to target
+    const dir = this._getDirection(sourceGapped, sourcePosition, targetGapped)
+    const dirAccessor = dir.x !== 0 ? "x" : "y"
+    const currDir = dir[dirAccessor]
+
+    let points = []
+    let centerX, centerY
+    const sourceGapOffset = { x: 0, y: 0 }
+    const targetGapOffset = { x: 0, y: 0 }
+
+    const [defaultCenterX, defaultCenterY] = this._getEdgeCenter(source.x, source.y, target.x, target.y)
+
+    // Opposite handle positions (e.g., right→left, bottom→top)
+    if (sourceDir[dirAccessor] * targetDir[dirAccessor] === -1) {
+      centerX = (sourceGapped.x + targetGapped.x) / 2
+      centerY = (sourceGapped.y + targetGapped.y) / 2
+
+      const verticalSplit = [
+        { x: centerX, y: sourceGapped.y },
+        { x: centerX, y: targetGapped.y }
+      ]
+      const horizontalSplit = [
+        { x: sourceGapped.x, y: centerY },
+        { x: targetGapped.x, y: centerY }
+      ]
+
+      if (sourceDir[dirAccessor] === currDir) {
+        points = dirAccessor === "x" ? verticalSplit : horizontalSplit
       } else {
-        path += ` L ${curr.x},${curr.y}`
+        points = dirAccessor === "x" ? horizontalSplit : verticalSplit
+      }
+    } else {
+      // Same or perpendicular directions
+      const sourceTarget = [{ x: sourceGapped.x, y: targetGapped.y }]
+      const targetSource = [{ x: targetGapped.x, y: sourceGapped.y }]
+
+      if (dirAccessor === "x") {
+        points = sourceDir.x === currDir ? targetSource : sourceTarget
+      } else {
+        points = sourceDir.y === currDir ? sourceTarget : targetSource
+      }
+
+      // Handle same positions edge case
+      if (sourcePosition === targetPosition) {
+        const diff = Math.abs(source[dirAccessor] - target[dirAccessor])
+        if (diff <= offset) {
+          const gapOffset = Math.min(offset - 1, offset - diff)
+          if (sourceDir[dirAccessor] === currDir) {
+            sourceGapOffset[dirAccessor] = (sourceGapped[dirAccessor] > source[dirAccessor] ? -1 : 1) * gapOffset
+          } else {
+            targetGapOffset[dirAccessor] = (targetGapped[dirAccessor] > target[dirAccessor] ? -1 : 1) * gapOffset
+          }
+        }
+      }
+
+      // Mixed handle positions (e.g., right→bottom)
+      if (sourcePosition !== targetPosition) {
+        const dirAccessorOpposite = dirAccessor === "x" ? "y" : "x"
+        const isSameDir = sourceDir[dirAccessor] === targetDir[dirAccessorOpposite]
+        const sourceGtTargetOppo = sourceGapped[dirAccessorOpposite] > targetGapped[dirAccessorOpposite]
+        const sourceLtTargetOppo = sourceGapped[dirAccessorOpposite] < targetGapped[dirAccessorOpposite]
+        const flipSourceTarget =
+          (sourceDir[dirAccessor] === 1 && ((!isSameDir && sourceGtTargetOppo) || (isSameDir && sourceLtTargetOppo))) ||
+          (sourceDir[dirAccessor] !== 1 && ((!isSameDir && sourceLtTargetOppo) || (isSameDir && sourceGtTargetOppo)))
+        if (flipSourceTarget) {
+          points = dirAccessor === "x" ? sourceTarget : targetSource
+        }
+      }
+
+      const sourceGapPoint = { x: sourceGapped.x + sourceGapOffset.x, y: sourceGapped.y + sourceGapOffset.y }
+      const targetGapPoint = { x: targetGapped.x + targetGapOffset.x, y: targetGapped.y + targetGapOffset.y }
+      const maxXDistance = Math.max(Math.abs(sourceGapPoint.x - points[0].x), Math.abs(targetGapPoint.x - points[0].x))
+      const maxYDistance = Math.max(Math.abs(sourceGapPoint.y - points[0].y), Math.abs(targetGapPoint.y - points[0].y))
+
+      if (maxXDistance >= maxYDistance) {
+        centerX = (sourceGapPoint.x + targetGapPoint.x) / 2
+        centerY = points[0].y
+      } else {
+        centerX = points[0].x
+        centerY = (sourceGapPoint.y + targetGapPoint.y) / 2
       }
     }
 
-    const mid = Math.floor(points.length / 2)
-    const labelX = points[mid]?.x || (s.x + t.x) / 2
-    const labelY = points[mid]?.y || (s.y + t.y) / 2
+    const gappedSource = { x: sourceGapped.x + sourceGapOffset.x, y: sourceGapped.y + sourceGapOffset.y }
+    const gappedTarget = { x: targetGapped.x + targetGapOffset.x, y: targetGapped.y + targetGapOffset.y }
 
-    return { path, labelX, labelY }
+    const pathPoints = [
+      source,
+      ...(gappedSource.x !== points[0].x || gappedSource.y !== points[0].y ? [gappedSource] : []),
+      ...points,
+      ...(gappedTarget.x !== points[points.length - 1].x || gappedTarget.y !== points[points.length - 1].y ? [gappedTarget] : []),
+      target
+    ]
+
+    return [pathPoints, centerX || defaultCenterX, centerY || defaultCenterY]
   }
 
-  _getStepPoints(s, t, sp, tp, offset) {
-    const points = [{ x: s.x, y: s.y }]
-
-    // Opposite directions (e.g., right→left): route through midpoint
-    if ((sp === "right" && tp === "left") || (sp === "left" && tp === "right")) {
-      const dist = Math.abs(t.x - s.x)
-      const halfDist = dist / 2
-      points.push({ x: s.x + (sp === "right" ? offset : -offset), y: s.y })
-      points.push({ x: s.x + (sp === "right" ? halfDist : -halfDist), y: s.y })
-      points.push({ x: s.x + (sp === "right" ? halfDist : -halfDist), y: t.y })
-      points.push({ x: t.x + (tp === "left" ? -offset : offset), y: t.y })
+  _getDirection(source, sourcePosition, target) {
+    if (sourcePosition === "left" || sourcePosition === "right") {
+      return source.x < target.x ? { x: 1, y: 0 } : { x: -1, y: 0 }
     }
-    else if ((sp === "bottom" && tp === "top") || (sp === "top" && tp === "bottom")) {
-      const dist = Math.abs(t.y - s.y)
-      const halfDist = dist / 2
-      points.push({ x: s.x, y: s.y + (sp === "bottom" ? offset : -offset) })
-      points.push({ x: s.x, y: s.y + (sp === "bottom" ? halfDist : -halfDist) })
-      points.push({ x: t.x, y: s.y + (sp === "bottom" ? halfDist : -halfDist) })
-      points.push({ x: t.x, y: t.y + (tp === "top" ? -offset : offset) })
-    }
-    // Perpendicular (e.g., right→top): direct corner
-    else if (sp === "right" || sp === "left") {
-      const sx = s.x + (sp === "right" ? offset : -offset)
-      points.push({ x: sx, y: s.y })
-      if (tp === "top" || tp === "bottom") {
-        const ty = t.y + (tp === "top" ? -offset : offset)
-        points.push({ x: sx, y: ty })
-        points.push({ x: t.x, y: ty })
-      } else {
-        points.push({ x: sx, y: t.y })
-      }
-    }
-    else {
-      const sy = s.y + (sp === "bottom" ? offset : -offset)
-      points.push({ x: s.x, y: sy })
-      if (tp === "left" || tp === "right") {
-        const tx = t.x + (tp === "left" ? -offset : offset)
-        points.push({ x: tx, y: sy })
-        points.push({ x: tx, y: t.y })
-      } else {
-        points.push({ x: t.x, y: sy })
-      }
-    }
-
-    points.push({ x: t.x, y: t.y })
-    return points
+    return source.y < target.y ? { x: 0, y: 1 } : { x: 0, y: -1 }
   }
 
-  _getBend(p1, p2, p3, radius) {
-    const dx1 = p2.x - p1.x
-    const dy1 = p2.y - p1.y
-    const dx2 = p3.x - p2.x
-    const dy2 = p3.y - p2.y
+  // React Flow: getBend — rounded corner for smoothstep
+  _getBend(a, b, c, size) {
+    const dist = (p1, p2) => Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2))
+    const bendSize = Math.min(dist(a, b) / 2, dist(b, c) / 2, size)
+    const { x, y } = b
 
-    const dist1 = Math.hypot(dx1, dy1)
-    const dist2 = Math.hypot(dx2, dy2)
+    // No bend needed (collinear)
+    if ((a.x === x && x === c.x) || (a.y === y && y === c.y)) {
+      return `L${x} ${y}`
+    }
 
-    if (dist1 === 0 || dist2 === 0) return ` L ${p2.x},${p2.y}`
+    // First segment is horizontal
+    if (a.y === y) {
+      const xDir = a.x < c.x ? -1 : 1
+      const yDir = a.y < c.y ? 1 : -1
+      return `L ${x + bendSize * xDir},${y}Q ${x},${y} ${x},${y + bendSize * yDir}`
+    }
 
-    const r = Math.min(radius, dist1 / 2, dist2 / 2)
-    const cx1 = p2.x - (dx1 / dist1) * r
-    const cy1 = p2.y - (dy1 / dist1) * r
-    const cx2 = p2.x + (dx2 / dist2) * r
-    const cy2 = p2.y + (dy2 / dist2) * r
-
-    return ` L ${cx1},${cy1} Q ${p2.x},${p2.y} ${cx2},${cy2}`
-  }
-
-  // ═══════════ STEP ═══════════
-
-  _stepPath(s, t, sp, tp) {
-    const { path } = this._smoothStepPath(s, t, sp, tp)
-    // Step is smoothstep with borderRadius=0, but we use the same logic
-    const cleanPath = path.replace(/ Q [^L]*/g, '') // Remove curves
-    return { path: cleanPath, labelX: (s.x + t.x) / 2, labelY: (s.y + t.y) / 2 }
+    // First segment is vertical
+    const xDir = a.x < c.x ? 1 : -1
+    const yDir = a.y < c.y ? -1 : 1
+    return `L ${x},${y + bendSize * yDir}Q ${x},${y} ${x + bendSize * xDir},${y}`
   }
 
   // ═══════════ STRAIGHT ═══════════
 
-  _straightPath(s, t) {
-    return { path: `M ${s.x},${s.y} L ${t.x},${t.y}`, labelX: (s.x + t.x) / 2, labelY: (s.y + t.y) / 2 }
+  _getStraightPath(sourceX, sourceY, targetX, targetY) {
+    const [labelX, labelY] = this._getEdgeCenter(sourceX, sourceY, targetX, targetY)
+    return [`M${sourceX},${sourceY} L${targetX},${targetY}`, labelX, labelY]
+  }
+
+  // React Flow: getEdgeCenter
+  _getEdgeCenter(sourceX, sourceY, targetX, targetY) {
+    const xOffset = Math.abs(targetX - sourceX) / 2
+    const centerX = targetX < sourceX ? targetX + xOffset : targetX - xOffset
+    const yOffset = Math.abs(targetY - sourceY) / 2
+    const centerY = targetY < sourceY ? targetY + yOffset : targetY - yOffset
+    return [centerX, centerY]
   }
 
   // ═══════════ INTERACTION PATH ═══════════
@@ -304,12 +402,11 @@ export default class extends Controller {
     const svg = this.element.closest("svg")
     if (!svg) return
     this._interactionPath = document.createElementNS("http://www.w3.org/2000/svg", "path")
-    this._interactionPath.setAttribute("stroke", "transparent")
     this._interactionPath.setAttribute("fill", "none")
+    this._interactionPath.setAttribute("stroke-opacity", "0")
     this._interactionPath.setAttribute("stroke-width", String(this.interactionWidthValue))
-    this._interactionPath.style.pointerEvents = "stroke"
-    this._interactionPath.style.cursor = "pointer"
-    this._interactionPath.dataset.edgeInteraction = this.idValue
+    this._interactionPath.setAttribute("stroke", "transparent")
+    this._interactionPath.classList.add("hf-edge-interaction")
     this._onInteractionClick = (e) => {
       e.stopPropagation()
       if (!this.selectableValue) return
@@ -325,70 +422,56 @@ export default class extends Controller {
   _createReconnectHandles() {
     const svg = this.element.closest("svg")
     if (!svg) return
-    
-    // Source handle (invisible circle at start)
-    this._sourceHandle = document.createElementNS("http://www.w3.org/2000/svg", "circle")
-    this._sourceHandle.setAttribute("r", "8")
-    this._sourceHandle.setAttribute("fill", "transparent")
-    this._sourceHandle.setAttribute("stroke", "transparent")
-    this._sourceHandle.setAttribute("stroke-width", "12")
-    this._sourceHandle.style.cursor = "crosshair"
-    this._sourceHandle.style.pointerEvents = "all"
-    this._sourceHandle.dataset.edgeReconnectSource = this.idValue
-    
-    // Target handle (invisible circle at end)
-    this._targetHandle = document.createElementNS("http://www.w3.org/2000/svg", "circle")
-    this._targetHandle.setAttribute("r", "8")
-    this._targetHandle.setAttribute("fill", "transparent")
-    this._targetHandle.setAttribute("stroke", "transparent")
-    this._targetHandle.setAttribute("stroke-width", "12")
-    this._targetHandle.style.cursor = "crosshair"
-    this._targetHandle.style.pointerEvents = "all"
-    this._targetHandle.dataset.edgeReconnectTarget = this.idValue
-    
-    // Position handles along the path
-    this._updateReconnectHandlePositions()
-    
-    // Drag handlers
+
+    const makeHandle = (type) => {
+      const h = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+      h.setAttribute("r", "8")
+      h.setAttribute("fill", "transparent")
+      h.setAttribute("stroke", "transparent")
+      h.classList.add("hf-edge-updater", `hf-edge-updater-${type}`)
+      return h
+    }
+
+    this._sourceHandle = makeHandle("source")
+    this._targetHandle = makeHandle("target")
+
+    // Set data attributes for test discoverability
+    this._sourceHandle.setAttribute("data-edge-reconnect-source", this.idValue)
+    this._targetHandle.setAttribute("data-edge-reconnect-target", this.idValue)
+
     this._onSourceDrag = (e) => {
       e.stopPropagation()
-      this._dispatch("reconnectstart", { 
-        edgeId: this.idValue, 
-        type: "source", 
-        currentNode: this.sourceValue, 
-        currentHandle: this.sourceHandleValue 
+      this._dispatch("reconnectstart", {
+        edgeId: this.idValue, type: "source",
+        currentNode: this.sourceValue, currentHandle: this.sourceHandleValue
       })
     }
     this._onTargetDrag = (e) => {
       e.stopPropagation()
-      this._dispatch("reconnectstart", { 
-        edgeId: this.idValue, 
-        type: "target", 
-        currentNode: this.targetValue, 
-        currentHandle: this.targetHandleValue 
+      this._dispatch("reconnectstart", {
+        edgeId: this.idValue, type: "target",
+        currentNode: this.targetValue, currentHandle: this.targetHandleValue
       })
     }
-    
+
     this._sourceHandle.addEventListener("pointerdown", this._onSourceDrag)
     this._targetHandle.addEventListener("pointerdown", this._onTargetDrag)
-    
-    svg.insertBefore(this._sourceHandle, this.element)
-    svg.insertBefore(this._targetHandle, this.element)
+
+    svg.appendChild(this._sourceHandle)
+    svg.appendChild(this._targetHandle)
   }
-  
+
   _updateReconnectHandlePositions() {
     if (!this._sourceHandle || !this._targetHandle) return
     const d = this.element.getAttribute("d")
     if (!d) return
-    
-    // Get start point (M x,y)
+
     const startMatch = d.match(/M\s*([\d.-]+)[,\s]+([\d.-]+)/)
     if (startMatch) {
       this._sourceHandle.setAttribute("cx", startMatch[1])
       this._sourceHandle.setAttribute("cy", startMatch[2])
     }
-    
-    // Get end point (last coordinate pair)
+
     const coords = d.match(/([\d.-]+)[,\s]+([\d.-]+)/g)
     if (coords && coords.length >= 2) {
       const last = coords[coords.length - 1].split(/[,\s]+/)
@@ -397,33 +480,82 @@ export default class extends Controller {
     }
   }
 
-  // ═══════════ LABEL ═══════════
+  // ═══════════ LABEL — native SVG (React Flow style) ═══════════
 
-  _createLabel() {
+  _updateLabel(labelX, labelY) {
+    if (!this.labelValue) return
     const svg = this.element.closest("svg")
     if (!svg) return
-    this._labelEl = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject")
-    this._labelEl.setAttribute("width", "200")
-    this._labelEl.setAttribute("height", "40")
-    this._labelEl.style.overflow = "visible"
-    this._labelEl.style.pointerEvents = "none"
 
-    const div = document.createElement("div")
-    const [pb, pp] = this.labelBgPaddingValue
-    div.style.cssText = `
-      display:inline-block;padding:${pb}px ${pp}px;
-      background:${this.labelShowBgValue ? "white" : "transparent"};
-      border-radius:${this.labelBgBorderRadiusValue}px;
-      font-size:12px;color:#64748b;white-space:nowrap;text-align:center;
-      box-shadow:${this.labelShowBgValue ? "0 1px 3px rgba(0,0,0,0.08)" : "none"};
-    `
-    Object.assign(div.style, this.labelStyleValue)
-    div.textContent = this.labelValue
-    this._labelEl.appendChild(div)
-    svg.appendChild(this._labelEl)
+    if (!this._labelGroup) {
+      this._labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g")
+      this._labelGroup.classList.add("hf-edge-textwrapper")
+      this._labelGroup.style.pointerEvents = "all"
+
+      // Background rect
+      this._labelBg = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+      this._labelBg.classList.add("hf-edge-textbg")
+      const [padX, padY] = this.labelBgPaddingValue
+      this._labelBg.setAttribute("rx", String(this.labelBgBorderRadiusValue))
+      this._labelBg.setAttribute("ry", String(this.labelBgBorderRadiusValue))
+      if (this.labelShowBgValue) {
+        this._labelGroup.appendChild(this._labelBg)
+      }
+      if (this.labelBgStyleValue && typeof this.labelBgStyleValue === "object") {
+        Object.entries(this.labelBgStyleValue).forEach(([k, v]) => this._labelBg.style[k] = v)
+      }
+
+      // Text element
+      this._labelText = document.createElementNS("http://www.w3.org/2000/svg", "text")
+      this._labelText.classList.add("hf-edge-text")
+      this._labelText.setAttribute("dy", "0.3em")
+      this._labelText.textContent = this.labelValue
+      if (this.labelStyleValue && typeof this.labelStyleValue === "object") {
+        Object.entries(this.labelStyleValue).forEach(([k, v]) => this._labelText.style[k] = v)
+      }
+
+      this._labelGroup.appendChild(this._labelText)
+      svg.appendChild(this._labelGroup)
+
+      // Measure text after append
+      requestAnimationFrame(() => this._measureAndPositionLabel(labelX, labelY))
+      return
+    }
+
+    this._measureAndPositionLabel(labelX, labelY)
   }
 
-  // ═══════════ MARKERS ═══════════
+  _measureAndPositionLabel(labelX, labelY) {
+    if (!this._labelText || !this._labelGroup) return
+
+    let bbox
+    try {
+      bbox = this._labelText.getBBox()
+    } catch (e) {
+      // SVG not rendered yet
+      return
+    }
+
+    const [padX, padY] = this.labelBgPaddingValue
+    const textWidth = bbox.width
+    const textHeight = bbox.height
+
+    // Position group centered on label point
+    this._labelGroup.setAttribute("transform", `translate(${labelX - textWidth / 2} ${labelY - textHeight / 2})`)
+
+    // Position text
+    this._labelText.setAttribute("y", String(textHeight / 2))
+
+    // Position background rect
+    if (this._labelBg && this.labelShowBgValue) {
+      this._labelBg.setAttribute("x", String(-padX))
+      this._labelBg.setAttribute("y", String(-padY))
+      this._labelBg.setAttribute("width", String(textWidth + 2 * padX))
+      this._labelBg.setAttribute("height", String(textHeight + 2 * padY))
+    }
+  }
+
+  // ═══════════ MARKERS — React Flow style ═══════════
 
   _setupMarkers() {
     if (!this.markerStartValue && !this.markerEndValue) return
@@ -431,44 +563,105 @@ export default class extends Controller {
     if (!svg) return
 
     let defs = svg.querySelector("defs")
-    if (!defs) { defs = document.createElementNS("http://www.w3.org/2000/svg", "defs"); svg.insertBefore(defs, svg.firstChild) }
+    if (!defs) {
+      defs = document.createElementNS("http://www.w3.org/2000/svg", "defs")
+      svg.insertBefore(defs, svg.firstChild)
+    }
 
-    if (this.markerEndValue === "arrow") {
-      const id = `hf-marker-${this.idValue}`
-      defs.appendChild(this._createArrowMarker(id, this.markerColorValue))
+    // Use explicit color, or fall back to the edge element's computed stroke color.
+    // We read it here (not inside _createMarker) so the CSS class has already applied.
+    const color = this.markerColorValue ||
+      window.getComputedStyle(this.element).stroke ||
+      "#b1b1b7"
+
+    if (this.markerEndValue) {
+      const type = this.markerEndValue
+      const id = `hf-marker-end-${this.idValue}`
+      if (!defs.querySelector(`#${CSS.escape(id)}`)) {
+        defs.appendChild(this._createMarker(id, type, color))
+      }
       this.element.setAttribute("marker-end", `url(#${id})`)
     }
-    if (this.markerStartValue === "arrow") {
-      const id = `hf-marker-s-${this.idValue}`
-      defs.appendChild(this._createArrowMarker(id, this.markerColorValue, true))
+    if (this.markerStartValue) {
+      const type = this.markerStartValue
+      const id = `hf-marker-start-${this.idValue}`
+      if (!defs.querySelector(`#${CSS.escape(id)}`)) {
+        defs.appendChild(this._createMarker(id, type, color))
+      }
       this.element.setAttribute("marker-start", `url(#${id})`)
     }
   }
 
-  _createArrowMarker(id, color, reverse = false) {
-    const m = document.createElementNS("http://www.w3.org/2000/svg", "marker")
-    m.setAttribute("id", id)
-    m.setAttribute("viewBox", "0 0 10 10")
-    m.setAttribute("refX", reverse ? "1" : "9")
-    m.setAttribute("refY", "5")
-    m.setAttribute("markerWidth", "12")
-    m.setAttribute("markerHeight", "12")
-    m.setAttribute("markerUnits", "userSpaceOnUse")
-    m.setAttribute("orient", "auto-start-reverse")
-    const p = document.createElementNS("http://www.w3.org/2000/svg", "path")
-    p.setAttribute("d", reverse ? "M 10 1 L 0 5 L 10 9 z" : "M 0 1 L 10 5 L 0 9 z")
-    p.setAttribute("fill", color)
-    m.appendChild(p)
-    return m
-  }
+  /**
+   /**
+    * Create SVG marker matching React Flow's MarkerSymbols.
+    * Uses markerUnits="strokeWidth" so marker size scales with edge thickness.
+    * Two types:
+    *   "arrow" — open arrowhead (polyline, no fill)
+    *   "arrowclosed" — filled arrowhead (path with fill)
+    *
+    * Colors: if a custom color is provided it is used; otherwise "currentColor"
+    * inherits from the referencing <path> element's stroke, so markers always
+    * match the edge stroke color automatically.
+    */
+   _createMarker(id, type, color) {
+     const m = document.createElementNS("http://www.w3.org/2000/svg", "marker")
+     m.setAttribute("id", id)
+     m.setAttribute("viewBox", "0 0 10 10")
+     m.setAttribute("refX", "10")
+     m.setAttribute("refY", "5")
+     m.setAttribute("markerWidth", "12.5")
+     m.setAttribute("markerHeight", "12.5")
+     m.setAttribute("markerUnits", "strokeWidth")
+     m.setAttribute("orient", "auto-start-reverse")
+     m.classList.add("hf-arrowhead")
+
+     // color is always resolved by _setupMarkers before calling here
+     const c = color || "#b1b1b7"
+
+     if (type === "arrow") {
+       // Open arrow — chevron, no fill
+       const p = document.createElementNS("http://www.w3.org/2000/svg", "polyline")
+       p.setAttribute("points", "0,0 10,5 0,10")
+       p.setAttribute("fill", "none")
+       p.setAttribute("stroke", c)
+       p.setAttribute("stroke-width", "1.5")
+       p.setAttribute("stroke-linecap", "round")
+       p.setAttribute("stroke-linejoin", "round")
+       p.classList.add("arrow")
+       m.appendChild(p)
+     } else {
+       // arrowclosed — filled triangle
+       const p = document.createElementNS("http://www.w3.org/2000/svg", "path")
+       p.setAttribute("d", "M0,0 L10,5 L0,10 Z")
+       p.setAttribute("fill", c)
+       p.setAttribute("stroke", c)
+       p.setAttribute("stroke-width", "1")
+       p.setAttribute("stroke-linejoin", "round")
+       p.classList.add("arrowclosed")
+       m.appendChild(p)
+     }
+
+     return m
+   }
 
   // ═══════════ SELECTION / VISIBILITY ═══════════
 
-  select()   { if (this.selectableValue) { this.element.classList.add("selected"); this._dispatch("edgeselect", { edgeId: this.idValue }) } }
-  deselect()  { this.element.classList.remove("selected"); this._dispatch("edgedeselect", { edgeId: this.idValue }) }
-  hide()     { this.hiddenValue = true; this.element.style.display = "none" }
-  show()     { this.hiddenValue = false; this.element.style.display = "" }
-  refresh()  { this._updatePath() }
+  select() {
+    if (this.selectableValue) {
+      this.element.classList.add("selected")
+      this._dispatch("edgeselect", { edgeId: this.idValue })
+    }
+  }
+  deselect() {
+    this.element.classList.remove("selected")
+    this._dispatch("edgedeselect", { edgeId: this.idValue })
+  }
+  hide()    { this.hiddenValue = true; this.element.style.display = "none" }
+  show()    { this.hiddenValue = false; this.element.style.display = "" }
+  refresh() { this._updatePath() }
 
-  _dispatch(name, detail) { document.dispatchEvent(new CustomEvent(`hotwire-flow:${name}`, { detail, bubbles: true })) }
+  _dispatch(name, detail) {
+    document.dispatchEvent(new CustomEvent(`hotwire-flow:${name}`, { detail, bubbles: true }))
+  }
 }

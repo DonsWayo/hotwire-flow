@@ -1,0 +1,84 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Back" [ref=e3] [cursor=pointer]:
+      - /url: ./
+      - img [ref=e4]
+      - text: Back
+    - heading "Warehouse Operations" [level=1] [ref=e6]:
+      - img [ref=e7]
+      - text: Warehouse Operations
+    - generic [ref=e10]: Live
+    - generic [ref=e12]: 7 stations · 7 routes
+  - generic [ref=e14]:
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]: Receiving Dock
+          - generic [ref=e20]:
+            - generic [ref=e21]:
+              - generic [ref=e22]: Inbound
+              - generic [ref=e23]: 24 pallets/hr
+            - generic [ref=e24]:
+              - generic [ref=e25]: Trucks waiting
+              - generic [ref=e26]: "3"
+        - generic [ref=e28]:
+          - generic [ref=e29]: Quality Control
+          - generic [ref=e30]:
+            - generic [ref=e31]:
+              - generic [ref=e32]: Inspect rate
+              - generic [ref=e33]: 98.5%
+            - generic [ref=e34]:
+              - generic [ref=e35]: Rejects
+              - generic [ref=e36]: 1.5%
+        - generic [ref=e39]:
+          - generic [ref=e40]: Putaway
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - generic [ref=e43]: Direct store
+              - generic [ref=e44]: 60%
+            - generic [ref=e45]:
+              - generic [ref=e46]: Queue
+              - generic [ref=e47]: 18 items
+        - generic [ref=e50]:
+          - generic [ref=e51]: Storage
+          - generic [ref=e52]:
+            - generic [ref=e53]:
+              - generic [ref=e54]: Capacity
+              - generic [ref=e55]: 78% used
+            - generic [ref=e56]:
+              - generic [ref=e57]: SKUs
+              - generic [ref=e58]: 12,450
+        - generic [ref=e61]:
+          - generic [ref=e62]: Pick
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - generic [ref=e65]: Orders/hr
+              - generic [ref=e66]: "156"
+            - generic [ref=e67]:
+              - generic [ref=e68]: Accuracy
+              - generic [ref=e69]: 99.8%
+        - generic [ref=e72]:
+          - generic [ref=e73]: Pack
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - generic [ref=e76]: Throughput
+              - generic [ref=e77]: 120/hr
+            - generic [ref=e78]:
+              - generic [ref=e79]: Materials
+              - generic [ref=e80]: Box, wrap
+        - generic [ref=e83]:
+          - generic [ref=e84]: Ship
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - generic [ref=e87]: Carriers
+              - generic [ref=e88]: 4 active
+            - generic [ref=e89]:
+              - generic [ref=e90]: Dispatched
+              - generic [ref=e91]: 89 today
+      - img
+    - generic [ref=e107]:
+      - button "+" [ref=e108] [cursor=pointer]
+      - button "100%"
+      - button "-" [ref=e109] [cursor=pointer]
+      - button "⊞" [ref=e110] [cursor=pointer]
+    - img [ref=e112]

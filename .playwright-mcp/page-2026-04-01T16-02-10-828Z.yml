@@ -1,0 +1,28 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Back" [ref=e3] [cursor=pointer]:
+      - /url: ./
+      - img
+      - text: Back
+    - heading "Node Toolbar Demo" [level=1] [ref=e5]:
+      - img [ref=e6]
+      - text: Node Toolbar Demo
+    - generic [ref=e8]: Click a node to see its floating toolbar
+  - generic [ref=e10]:
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]: Edit Node
+        - generic [ref=e16]: Click to see toolbar above
+      - generic [ref=e18]:
+        - generic [ref=e20]: Bottom Toolbar
+        - generic [ref=e21]: Toolbar appears below
+      - generic [ref=e23]:
+        - generic [ref=e25]: No Toolbar
+        - generic [ref=e26]: This node has no toolbar
+      - img
+    - generic [ref=e31]:
+      - button "+" [ref=e32] [cursor=pointer]
+      - button "100%"
+      - button "−" [ref=e33] [cursor=pointer]
+      - button "⊞" [ref=e34] [cursor=pointer]
+    - img [ref=e36]

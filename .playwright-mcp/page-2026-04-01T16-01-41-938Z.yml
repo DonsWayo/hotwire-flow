@@ -1,0 +1,37 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Back" [ref=e3] [cursor=pointer]:
+      - /url: ./
+      - img
+      - text: Back
+    - heading "Auto Layout Demo" [level=1] [ref=e5]:
+      - img [ref=e6]
+      - text: Auto Layout Demo
+    - generic [ref=e8]:
+      - button "↓ Vertical" [ref=e9] [cursor=pointer]
+      - button "→ Horizontal" [ref=e10] [cursor=pointer]
+    - generic [ref=e11]: Click layout buttons to auto-arrange
+  - generic [ref=e13]:
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]: Source
+        - generic [ref=e19]: API input
+      - generic [ref=e21]:
+        - generic [ref=e23]: Validate
+        - generic [ref=e24]: Check schema
+      - generic [ref=e26]:
+        - generic [ref=e28]: Transform
+        - generic [ref=e29]: Map fields
+      - generic [ref=e31]:
+        - generic [ref=e33]: Enrich
+        - generic [ref=e34]: Add metadata
+      - generic [ref=e36]:
+        - generic [ref=e38]: Store
+        - generic [ref=e39]: Save to DB
+      - img
+    - generic [ref=e50]:
+      - button "+" [ref=e51] [cursor=pointer]
+      - button "100%"
+      - button "−" [ref=e52] [cursor=pointer]
+      - button "⊞" [ref=e53] [cursor=pointer]
+    - img [ref=e55]

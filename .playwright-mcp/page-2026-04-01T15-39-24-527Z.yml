@@ -1,0 +1,50 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - img [ref=e4]
+      - text: Hotwire Flow
+    - button "Save" [ref=e12] [cursor=pointer]
+    - button "Load" [ref=e13] [cursor=pointer]
+    - button "Export" [ref=e14] [cursor=pointer]
+    - generic [ref=e16]:
+      - button "↓ Layout" [ref=e17] [cursor=pointer]
+      - button "→ Layout" [ref=e18] [cursor=pointer]
+    - button "Fit" [ref=e19] [cursor=pointer]
+    - generic [ref=e20]:
+      - generic [ref=e21]: 0 nodes
+      - generic [ref=e22]: 3 edges
+      - generic [ref=e23]: 100%
+  - generic [ref=e24]:
+    - generic [ref=e25]: Add Nodes
+    - generic [ref=e28]: Input
+    - generic [ref=e31]: Process
+    - generic [ref=e34]: Output
+    - generic [ref=e37]: Condition
+  - generic [ref=e39]:
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]: Input
+        - generic [ref=e45]: Data Source
+      - generic [ref=e47]:
+        - generic [ref=e49]: Process
+        - generic [ref=e50]: Transform Data
+      - generic [ref=e52]:
+        - generic [ref=e54]: Output
+        - generic [ref=e55]: Save Result
+      - generic [ref=e56]:
+        - generic [ref=e58]: Condition
+        - generic [ref=e59]: Branch Logic
+      - img
+    - generic [ref=e67]:
+      - button "+" [ref=e68] [cursor=pointer]
+      - button "100%"
+      - button "−" [ref=e69] [cursor=pointer]
+      - button "⊞" [ref=e70] [cursor=pointer]
+    - img [ref=e72]
+  - generic [ref=e78]:
+    - generic [ref=e79]: 100%
+    - generic [ref=e80]: 0, 0
+    - generic [ref=e81]: 4 nodes
+    - generic [ref=e82]: 3 edges
+    - generic [ref=e83]: "|"
+    - generic [ref=e84]: "Space+Drag: Pan · Del: Remove · Ctrl+A: Select All"

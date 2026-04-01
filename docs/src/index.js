@@ -23,7 +23,7 @@ export function registerHotwireFlow(application) {
 import FlowController from "./controllers/flow_controller.js"
 import NodeController from "./controllers/node_controller.js"
 import HandleController from "./controllers/handle_controller.js"
-import EdgeController from "./controllers/edge_controller.js"
+import EdgeController from "./controllers/edge_controller.js?v=19"
 import ConnectionLineController from "./controllers/connection_line_controller.js"
 import MinimapController from "./controllers/minimap_controller.js"
 import ToolbarController from "./controllers/toolbar_controller.js"

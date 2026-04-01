@@ -97,13 +97,14 @@ describe("Edge: labels", () => {
 
   beforeEach(() => { setupDOM(); app = startApp() })
 
-  it("creates foreignObject for labeled edges", async () => {
+  it("creates SVG text label for labeled edges", async () => {
     const el = document.querySelector('[data-flow-edge-id-value="e3"]')
     await getEdge(app, el)
-    await new Promise(r => setTimeout(r, 100))
-    const labels = document.querySelectorAll("foreignObject")
-    expect(labels.length).toBeGreaterThanOrEqual(1)
-    const labelText = labels[0]?.textContent
+    await new Promise(r => setTimeout(r, 200))
+    // New implementation uses native SVG <text> elements (matching React Flow)
+    const textEls = document.querySelectorAll("text.hf-edge-text")
+    expect(textEls.length).toBeGreaterThanOrEqual(1)
+    const labelText = textEls[0]?.textContent
     expect(labelText).toContain("hello world")
   })
 })
@@ -119,8 +120,10 @@ describe("Edge: markers", () => {
     await new Promise(r => setTimeout(r, 100))
     const markers = document.querySelectorAll("marker")
     expect(markers.length).toBeGreaterThanOrEqual(1)
-    const marker = markers[0]
-    expect(marker.querySelector("path")).toBeTruthy()
+    // e4 uses marker-end="arrow" → marker ID is "hf-marker-end-e4" → should contain a polyline
+    const marker = document.querySelector("#hf-marker-end-e4")
+    expect(marker).toBeTruthy()
+    expect(marker.querySelector("polyline")).toBeTruthy()
   })
 
   it("sets marker-end attribute on edge path", async () => {
@@ -171,7 +174,7 @@ describe("Edge: path types", () => {
   it("bezier path contains C command", async () => {
     const el = document.querySelector('[data-flow-edge-id-value="e1"]')
     await getEdge(app, el)
-    expect(el.getAttribute("d")).toContain("C ")
+    expect(el.getAttribute("d")).toMatch(/C[\d.-]/)
   })
 
   it("all edges have valid d attribute", async () => {

@@ -1,0 +1,59 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - img [ref=e4]
+      - text: Hotwire Flow
+    - button "Save" [ref=e12] [cursor=pointer]
+    - button "Load" [ref=e13] [cursor=pointer]
+    - button "Export" [ref=e14] [cursor=pointer]
+    - generic [ref=e16]:
+      - button "↓ Layout" [ref=e17] [cursor=pointer]
+      - button "→ Layout" [ref=e18] [cursor=pointer]
+    - button "Fit" [ref=e19] [cursor=pointer]
+    - generic [ref=e20]:
+      - generic [ref=e21]: 0 nodes
+      - generic [ref=e22]: 5 edges
+      - generic [ref=e23]: 100%
+  - generic [ref=e24]:
+    - generic [ref=e25]: Add Nodes
+    - generic [ref=e26]: Data Sources
+    - generic [ref=e28]:
+      - generic [ref=e29]: HTTP Request
+      - generic [ref=e30]: GET / POST
+    - generic [ref=e32]:
+      - generic [ref=e33]: Database
+      - generic [ref=e34]: SQL Query
+    - generic [ref=e35]: Processing
+    - generic [ref=e37]:
+      - generic [ref=e38]: Transform
+      - generic [ref=e39]: Map / Filter
+    - generic [ref=e41]:
+      - generic [ref=e42]: Condition
+      - generic [ref=e43]: If / Else
+    - generic [ref=e44]: Outputs
+    - generic [ref=e46]:
+      - generic [ref=e47]: Webhook
+      - generic [ref=e48]: HTTP POST
+  - generic [ref=e52]:
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - generic [ref=e55]: API Gateway
+        - generic [ref=e57]: Incoming REST requests
+      - generic [ref=e59]:
+        - generic [ref=e60]: Filter
+        - generic [ref=e62]: Drop invalid payloads
+      - generic [ref=e65]:
+        - generic [ref=e66]: Enrich
+        - generic [ref=e68]: Add geo & user metadata
+      - generic [ref=e70]:
+        - generic [ref=e71]: Aggregate
+        - generic [ref=e73]: Windowed aggregation (5m)
+      - generic [ref=e76]:
+        - generic [ref=e77]: Webhook
+        - generic [ref=e79]: POST to downstream service
+      - generic [ref=e81]:
+        - generic [ref=e82]: Store
+        - generic [ref=e84]: Persist to database
+    - img
+  - generic [ref=e97]: "Space+Drag: Pan · Scroll: Zoom · Right-click: Menu"
+  - img [ref=e99]

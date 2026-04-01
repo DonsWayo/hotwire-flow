@@ -101,8 +101,8 @@ describe("EdgeController", () => {
       return true
     }, { timeout: 3000 })
     const d = edgeEl.getAttribute("d")
-    expect(d).toContain("M ")
-    expect(d).toContain("C ")
+    expect(d).toMatch(/M[\d.-]/)
+    expect(d).toMatch(/C[\d.-]/)
   })
 
   it("draws straight path", async () => {
@@ -112,7 +112,7 @@ describe("EdgeController", () => {
       return true
     }, { timeout: 3000 })
     const d = edgeEl.getAttribute("d")
-    expect(d).toContain("L ")
+    expect(d).toMatch(/L[\d.-]/)
   })
 
   it("draws step path", async () => {
@@ -122,8 +122,8 @@ describe("EdgeController", () => {
       return true
     }, { timeout: 3000 })
     const d = edgeEl.getAttribute("d")
-    expect(d).toContain("L ")
-    expect(d).toContain("M ")
+    expect(d).toMatch(/L[\d .-]/)
+    expect(d).toMatch(/M[\d.-]/)
   })
 
   it("draws smoothstep path", async () => {

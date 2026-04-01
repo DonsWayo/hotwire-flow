@@ -1,0 +1,90 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Back" [ref=e3] [cursor=pointer]:
+      - /url: ./
+      - img [ref=e4]
+      - text: Back
+    - heading "Acme Corp — Org Chart" [level=1] [ref=e6]:
+      - img [ref=e7]
+      - text: Acme Corp — Org Chart
+    - generic [ref=e10]: 10 people
+  - generic [ref=e12]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - generic [ref=e17]: CEO
+          - generic [ref=e19]:
+            - generic [ref=e20]: AL
+            - generic [ref=e21]:
+              - generic [ref=e22]: Alex Liu
+              - generic [ref=e23]: Chief Executive Officer
+        - generic [ref=e25]:
+          - generic [ref=e26]: VP Engineering
+          - generic [ref=e28]:
+            - generic [ref=e29]: SR
+            - generic [ref=e30]:
+              - generic [ref=e31]: Sam Rivera
+              - generic [ref=e32]: Engineering Lead
+        - generic [ref=e35]:
+          - generic [ref=e36]: VP Sales
+          - generic [ref=e38]:
+            - generic [ref=e39]: JP
+            - generic [ref=e40]:
+              - generic [ref=e41]: Jamie Park
+              - generic [ref=e42]: Sales Lead
+        - generic [ref=e45]:
+          - generic [ref=e46]: VP Product
+          - generic [ref=e48]:
+            - generic [ref=e49]: MK
+            - generic [ref=e50]:
+              - generic [ref=e51]: Morgan Kim
+              - generic [ref=e52]: Product Lead
+        - generic [ref=e55]:
+          - generic [ref=e56]: Frontend Engineer
+          - generic [ref=e58]:
+            - generic [ref=e59]: TC
+            - generic [ref=e60]:
+              - generic [ref=e61]: Taylor Chen
+              - generic [ref=e62]: React / Vue
+        - generic [ref=e64]:
+          - generic [ref=e65]: Backend Engineer
+          - generic [ref=e67]:
+            - generic [ref=e68]: RG
+            - generic [ref=e69]:
+              - generic [ref=e70]: Riley Gomez
+              - generic [ref=e71]: Go / Rust
+        - generic [ref=e73]:
+          - generic [ref=e74]: Sales NA
+          - generic [ref=e76]:
+            - generic [ref=e77]: DW
+            - generic [ref=e78]:
+              - generic [ref=e79]: Dana Wilson
+              - generic [ref=e80]: North America
+        - generic [ref=e82]:
+          - generic [ref=e83]: Sales EU
+          - generic [ref=e85]:
+            - generic [ref=e86]: KN
+            - generic [ref=e87]:
+              - generic [ref=e88]: Kai Nguyen
+              - generic [ref=e89]: Europe
+        - generic [ref=e91]:
+          - generic [ref=e92]: PM Core
+          - generic [ref=e94]:
+            - generic [ref=e95]: LM
+            - generic [ref=e96]:
+              - generic [ref=e97]: Lena Martinez
+              - generic [ref=e98]: Core Platform
+        - generic [ref=e100]:
+          - generic [ref=e101]: PM Mobile
+          - generic [ref=e103]:
+            - generic [ref=e104]: JO
+            - generic [ref=e105]:
+              - generic [ref=e106]: Jordan Ortiz
+              - generic [ref=e107]: iOS / Android
+      - img
+    - generic [ref=e127]:
+      - button "+" [ref=e128] [cursor=pointer]
+      - button "100%"
+      - button "-" [ref=e129] [cursor=pointer]
+      - button "⊞" [ref=e130] [cursor=pointer]
+    - img [ref=e132]

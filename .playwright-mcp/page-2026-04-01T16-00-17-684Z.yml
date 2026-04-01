@@ -1,0 +1,105 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "Back" [ref=e3] [cursor=pointer]:
+      - /url: ./
+      - img [ref=e4]
+      - text: Back
+    - heading "B2B Order Processing Pipeline" [level=1] [ref=e6]:
+      - img [ref=e7]
+      - text: B2B Order Processing Pipeline
+    - generic [ref=e10]: Processing
+    - generic [ref=e12]: "Today: 1,247 orders · $847K"
+  - generic [ref=e14]:
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]: Order Intake
+          - generic [ref=e20]:
+            - generic [ref=e21]:
+              - generic [ref=e22]: Format
+              - generic [ref=e23]: EDI / JSON
+            - generic [ref=e24]:
+              - generic [ref=e25]: Today
+              - generic [ref=e26]: 1,247
+            - generic [ref=e27]:
+              - generic [ref=e28]: Value
+              - generic [ref=e29]: $847,230
+        - generic [ref=e31]:
+          - generic [ref=e32]: Validate
+          - generic [ref=e33]:
+            - generic [ref=e34]:
+              - generic [ref=e35]: Rules
+              - generic [ref=e36]: 18 active
+            - generic [ref=e37]:
+              - generic [ref=e38]: Pass rate
+              - generic [ref=e39]: 97.2%
+            - generic [ref=e40]:
+              - generic [ref=e41]: Avg time
+              - generic [ref=e42]: 45ms
+        - generic [ref=e45]:
+          - generic [ref=e46]: Price Engine
+          - generic [ref=e47]:
+            - generic [ref=e48]:
+              - generic [ref=e49]: Tiers
+              - generic [ref=e50]: Gold / Silver / Bronze
+            - generic [ref=e51]:
+              - generic [ref=e52]: Avg discount
+              - generic [ref=e53]: 12.4%
+            - generic [ref=e54]:
+              - generic [ref=e55]: Tax calc
+              - generic [ref=e56]: Auto
+        - generic [ref=e59]:
+          - generic [ref=e60]: Warehouse Pick
+          - generic [ref=e61]:
+            - generic [ref=e62]:
+              - generic [ref=e63]: Stations
+              - generic [ref=e64]: 4 active
+            - generic [ref=e65]:
+              - generic [ref=e66]: Items/hr
+              - generic [ref=e67]: "340"
+            - generic [ref=e68]:
+              - generic [ref=e69]: Accuracy
+              - generic [ref=e70]: 99.7%
+        - generic [ref=e73]:
+          - generic [ref=e74]: Ship
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - generic [ref=e77]: Carriers
+              - generic [ref=e78]: FedEx, UPS, DHL
+            - generic [ref=e79]:
+              - generic [ref=e80]: Avg transit
+              - generic [ref=e81]: 2.3 days
+            - generic [ref=e82]:
+              - generic [ref=e83]: Cost/order
+              - generic [ref=e84]: $8.40
+        - generic [ref=e87]:
+          - generic [ref=e88]: Invoice
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - generic [ref=e91]: Terms
+              - generic [ref=e92]: Net 30
+            - generic [ref=e93]:
+              - generic [ref=e94]: Pending
+              - generic [ref=e95]: $234K
+            - generic [ref=e96]:
+              - generic [ref=e97]: Overdue
+              - generic [ref=e98]: $12K
+        - generic [ref=e101]:
+          - generic [ref=e102]: Complete
+          - generic [ref=e103]:
+            - generic [ref=e104]:
+              - generic [ref=e105]: Today
+              - generic [ref=e106]: 1,189 done
+            - generic [ref=e107]:
+              - generic [ref=e108]: Revenue
+              - generic [ref=e109]: $802K
+            - generic [ref=e110]:
+              - generic [ref=e111]: NPS
+              - generic [ref=e112]: "72"
+      - img
+    - generic [ref=e130]:
+      - button "+" [ref=e131] [cursor=pointer]
+      - button "100%"
+      - button "-" [ref=e132] [cursor=pointer]
+      - button "⊞" [ref=e133] [cursor=pointer]
+    - img [ref=e135]
