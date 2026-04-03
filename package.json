@@ -1,5 +1,5 @@
 {
-  "name": "hotwire-flow",
+  "name": "@hotwirebits/flow",
   "version": "0.1.0",
   "description": "A React Flow recreation using Hotwire (Stimulus + Tailwind CSS). Build node-based editors with pure HTML.",
   "main": "src/index.js",
@@ -15,6 +15,23 @@
     "LICENSE",
     "CHANGELOG.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DonsWayo/hotwire-flow.git"
+  },
+  "homepage": "https://donswayo.github.io/hotwire-flow/",
+  "keywords": [
+    "hotwire",
+    "stimulus",
+    "flow",
+    "react-flow",
+    "node-editor",
+    "workflow",
+    "dag",
+    "graph",
+    "tailwindcss"
+  ],
+  "license": "MIT",
   "scripts": {
     "dev": "npx @tailwindcss/cli -i ./src/hotwire-flow.css -o ./dist/hotwire-flow.css --watch",
     "build": "npx @tailwindcss/cli -i ./src/hotwire-flow.css -o ./dist/hotwire-flow.css --minify",
