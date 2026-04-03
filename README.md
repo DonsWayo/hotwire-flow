@@ -1,8 +1,15 @@
 # Hotwire Flow
 
+[![npm version](https://img.shields.io/npm/v/@hotwirebits/flow.svg)](https://www.npmjs.com/package/@hotwirebits/flow)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **A React Flow recreation using Hotwire (Stimulus + Tailwind CSS).** Build node-based editors, workflow builders, DAGs, and org charts with pure HTML — no React required.
 
 Like [Lexxy](https://once.com/lexxy) reimagined rich text editing for Rails, Hotwire Flow reimagines node-based graph editors for any web stack.
+
+**[Live Demo](https://donswayo.github.io/hotwire-flow/)** | **[npm](https://www.npmjs.com/package/@hotwirebits/flow)** | **[GitHub](https://github.com/DonsWayo/hotwire-flow)**
+
+Part of the [HotwireBits](https://github.com/DonsWayo/hotwirebits) family.
 
 ---
 
@@ -10,52 +17,62 @@ Like [Lexxy](https://once.com/lexxy) reimagined rich text editing for Rails, Hot
 
 | Feature | Status |
 |---------|--------|
-| Drag & drop nodes | ✅ |
-| Pan & zoom (scroll, pinch, ctrl+scroll) | ✅ |
-| SVG edges (bezier, straight, step, smoothstep) | ✅ |
-| Animated edges | ✅ |
-| Edge labels (HTML via foreignObject) | ✅ |
-| Arrow markers | ✅ |
-| Connection handles (drag to connect) | ✅ |
-| Node types (input, output, default, group) | ✅ |
-| Multi-select (shift+click, drag-select box) | ✅ |
-| Minimap with viewport indicator | ✅ |
-| Toolbar (zoom in/out, fit view, reset) | ✅ |
-| Top toolbar bar (save, load, export) | ✅ |
-| Status bar (zoom, position, node/edge counts) | ✅ |
-| Background patterns (dots, grid, lines) | ✅ |
-| DnD sidebar palette | ✅ |
-| Context menu (right-click) | ✅ |
-| Keyboard shortcuts (Delete, Ctrl+A, Escape, Space+pan) | ✅ |
-| Save/Load to localStorage | ✅ |
-| Data API (addNode, removeNode, getIncomers, getOutgoers, toObject) | ✅ |
-| NodeResizer (8-handle resize) | ✅ |
-| NodeToolbar (floating toolbar) | ✅ |
-| Panel (positioned UI container) | ✅ |
-| Undo/Redo (Ctrl+Z, Ctrl+Y) | ✅ |
-| Copy/Paste (Ctrl+C, Ctrl+V) | ✅ |
-| Smooth viewport animations | ✅ |
-| fitViewOptions (padding, minZoom, maxZoom) | ✅ |
-| Auto Layout (vertical/horizontal) | ✅ |
-| defaultEdgeOptions | ✅ |
+| Drag & drop nodes | Done |
+| Pan & zoom (scroll, pinch, ctrl+scroll) | Done |
+| SVG edges (bezier, straight, step, smoothstep) | Done |
+| Animated edges | Done |
+| Edge labels (HTML via foreignObject) | Done |
+| Arrow markers | Done |
+| Connection handles (drag to connect) | Done |
+| Node types (input, output, default, group) | Done |
+| Multi-select (shift+click, drag-select box) | Done |
+| Minimap with viewport indicator | Done |
+| Toolbar (zoom in/out, fit view, reset) | Done |
+| Top toolbar bar (save, load, export) | Done |
+| Status bar (zoom, position, node/edge counts) | Done |
+| Background patterns (dots, grid, lines) | Done |
+| DnD sidebar palette | Done |
+| Context menu (right-click) | Done |
+| Keyboard shortcuts (Delete, Ctrl+A, Escape, Space+pan) | Done |
+| Save/Load to localStorage | Done |
+| Data API (addNode, removeNode, getIncomers, getOutgoers, toObject) | Done |
+| NodeResizer (8-handle resize) | Done |
+| NodeToolbar (floating toolbar) | Done |
+| Panel (positioned UI container) | Done |
+| Undo/Redo (Ctrl+Z, Ctrl+Y) | Done |
+| Copy/Paste (Ctrl+C, Ctrl+V) | Done |
+| Smooth viewport animations | Done |
+| fitViewOptions (padding, minZoom, maxZoom) | Done |
+| Auto Layout (vertical/horizontal) | Done |
+| defaultEdgeOptions | Done |
 
 ## Quick Start
 
+### Install
+
 ```bash
-npm install @hotwired/stimulus
+npm install @hotwirebits/flow
 ```
+
+This will also install `@hotwired/stimulus` as a dependency.
 
 ### 1. Include CSS
 
 ```html
-<link rel="stylesheet" href="hotwire-flow.css">
+<link rel="stylesheet" href="node_modules/@hotwirebits/flow/dist/hotwire-flow.css">
+```
+
+Or import in your build tool:
+
+```js
+import "@hotwirebits/flow/css"
 ```
 
 ### 2. Import and register
 
 ```js
 import { Application } from "@hotwired/stimulus"
-import { registerHotwireFlow } from "hotwire-flow"
+import { registerHotwireFlow } from "@hotwirebits/flow"
 
 const app = Application.start()
 registerHotwireFlow(app)
@@ -115,7 +132,25 @@ registerHotwireFlow(app)
 </div>
 ```
 
+### CDN Usage
+
+You can also use Hotwire Flow directly from a CDN without any build step:
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/@hotwirebits/flow@0.1.0/dist/hotwire-flow.css">
+
+<script type="module">
+  import { Application } from "https://unpkg.com/@hotwired/stimulus/dist/stimulus.js"
+  import { registerHotwireFlow } from "https://unpkg.com/@hotwirebits/flow@0.1.0/src/index.js"
+
+  const app = Application.start()
+  registerHotwireFlow(app)
+</script>
+```
+
 ## Examples
+
+See all examples live at **[donswayo.github.io/hotwire-flow](https://donswayo.github.io/hotwire-flow/)**.
 
 | Example | Description |
 |---------|-------------|
@@ -129,6 +164,9 @@ registerHotwireFlow(app)
 | [Org Chart](examples/org-chart.html) | B2B company hierarchy |
 | [Warehouse](examples/warehouse.html) | B2B warehouse operations flow |
 | [B2B Order](examples/b2b-order.html) | B2B order processing pipeline |
+| [Node Resizer](examples/node-resizer-demo.html) | Resizable nodes with 8 handles |
+| [Node Toolbar](examples/node-toolbar-demo.html) | Floating toolbar on selected nodes |
+| [Layout Demo](examples/layout-demo.html) | Auto layout (vertical/horizontal) |
 
 ## Controllers
 
@@ -151,6 +189,8 @@ registerHotwireFlow(app)
 | `NodeToolbarController` | `flow-node-toolbar` | Floating node toolbar |
 | `PanelController` | `flow-panel` | Positioned panel |
 | `LayoutController` | `flow-layout` | Auto-layout (vertical/horizontal) |
+
+## CSS Classes
 
 | Class | Purpose |
 |-------|---------|
@@ -232,9 +272,11 @@ All events dispatched on the canvas element with `hotwire-flow:` prefix:
 ## Development
 
 ```bash
+git clone https://github.com/DonsWayo/hotwire-flow.git
+cd hotwire-flow
 npm install
 npm run build          # Build CSS
-npm test               # Unit + integration tests
+npm test               # Unit + integration tests (200+)
 npm run test:e2e       # Playwright E2E tests
 npm run serve          # Dev server on :3000
 ```
